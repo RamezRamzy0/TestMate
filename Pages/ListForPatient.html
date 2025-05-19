@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List for patient</title>
+    <!-- إضافة مكتبة jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .dashboard-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: relative;
+            flex: 1;
+        }
+        
+        .header2 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: fadeIn 0.6s ease-out;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-left: 10px; /* Adjusted for better spacing */
+        }
+        
+        .logo img {
+            width: 60px; /* Increased size for a larger logo */
+            height: 60px;
+            object-fit: contain;
+            border-radius: 50%; /* Makes the logo circular */
+            border: 2px solid #ffda00; /* Optional: adds a subtle border to match the theme */
+        }
+        
+        .download-btn {
+            background-color: #ffda00;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s;
+            animation: slideLeft 0.8s ease-out;
+            position: relative;
+            margin-right: 3px;
+
+        }
+        
+        .download-btn:hover {
+            background-color: #e6b800;
+        }
+        
+        .download-btn svg {
+            margin-right: 8px;
+        }
+        
+        .download-btn.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .dashboard-container {
+            background-color: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.8s ease-out;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        
+        .view-all-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffcc00;
+            padding: 15px 20px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .header-cell {
+            flex: 1;
+            text-align: left;
+        }
+        
+        .header-cell.file-size {
+            flex: 0.5;
+            text-align: center;
+        }
+        
+        .header-cell.date {
+            flex: 0.5;
+            text-align: center;
+        }
+        
+        .header-cell.action {
+            flex: 0.5;
+            text-align: center;
+        }
+        
+        .reports-container {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .report-row {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s;
+            animation: slideUp 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .report-row:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .report-name {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+        
+        .report-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .report-icon.document {
+            color: #ffcc00;
+        }
+        
+        .report-icon.flask {
+            color: #4fa8ff;
+        }
+        
+        .file-size {
+            flex: 0.5;
+            text-align: center;
+            color: #666;
+        }
+        
+        .date {
+            flex: 0.5;
+            text-align: center;
+            color: #666;
+        }
+        
+        .action {
+            flex: 0.5;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .action-btn.view {
+            color: #4fa8ff;
+        }
+        
+        .action-btn.delete {
+            color: #ff6b6b;
+        }
+        
+        .back-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: #f0f0f0;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            animation: fadeIn 1s ease-out;
+        }
+        
+        .back-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        /* Loading Spinner Styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ffda00;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideLeft {
+            from { 
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .report-row:nth-child(1) { animation-delay: 0.1s; }
+        .report-row:nth-child(2) { animation-delay: 0.2s; }
+        .report-row:nth-child(3) { animation-delay: 0.3s; }
+        .report-row:nth-child(4) { animation-delay: 0.4s; }
+        .report-row:nth-child(5) { animation-delay: 0.5s; }
+        .report-row:nth-child(6) { animation-delay: 0.6s; }
+
+        .header {
+            display: flex;
+            width: 100%;
+            height: 58px;
+            align-items: center;
+            justify-content: center;
+            gap: 43.85px;
+            padding: 11.14px 5%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: var(--neutralwhite);
+            box-shadow: var(--shadow-4px);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            position: relative;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            width: 200px;
+        }
+        .whatsapp-image {
+            right: 61px;
+            top: -10px;
+            position: relative;
+            width: 160px;
+            height: auto;
+            object-fit: contain;
+            margin-right: -100px;
+        }
+
+        .text-wrapper-3 {
+            position: relative;
+            width: auto;
+            font-family: "Manrope", Helvetica;
+            font-weight: 700;
+            color: #000000;
+            font-size: 24px;
+            letter-spacing: 0;
+            line-height: normal;
+            white-space: nowrap;
+        }
+  
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-link {
+            font-family: "Manrope", Helvetica;
+            font-weight: 600;
+            color: #000000;
+            font-size: 16px;
+            letter-spacing: 0;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .nav-link:hover {
+            color: #fdd10e;
+        }
+
+        .right-menu {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 22.27px;
+            position: relative;
+            width: 200px;
+        }
+  
+        .profile-dropdown {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 8px 8px 16px;
+            position: relative;
+            flex: 0 0 auto;
+            background-color: var(--white);
+            border-radius: 100px;
+            border: 1px solid;
+            border-color: #e5e7eb;
+        }
+
+        .img {
+            position: relative;
+            width: 24px;
+            height: 24px;
+        }
+        .avatar {
+            position: relative;
+            width: 32px;
+            height: 32px;
+            background-image: url(https://c.animaapp.com/m91npn2umpacy3/img/avatar-base.svg);
+            background-size: 100% 100%;
+        }
+  
+        .login-button {
+            background-color: rgba(253, 209, 14, 1);
+            color: black;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <header class="header">
+            <div class="navbar">
+              <div class="logo-container">
+                <img class="whatsapp-image" src="https://c.animaapp.com/m91npn2umpacy3/img/whatsapp-image-2025-02-09-at-20-19-49-958c0d63-removebg-preview-.png" />
+                <div class="text-wrapper-3">Test Mate</div>
+              </div>
+              <div class="nav-links">
+                <a href="./landingPage.html" class="nav-link active">Home</a>
+                <a href="./searchForLap.html" class="nav-link ">Search</a>
+                <a href="./SettingsPage.html" class="nav-link">Settings</a>
+              </div>
+              
+             <div class="right-menu">
+
+  <a href="profile.html" class="profile-dropdown">
+    <img class="img" src="https://c.animaapp.com/m91npn2umpacy3/img/menu.svg" />
+    <div class="avatar"></div>
+  </a>
+  <a href="./SignPage.html" class="login-button">Login</a>
+</div>
+            </div>
+          </header>
+
+        <div class="header2" style="margin-top: 58px; justify-content: flex-end;">
+       
+            <button class="download-btn" id="download-report-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Patient report
+            </button>
+        </div>
+        
+        <div class="dashboard-container">
+            <div class="view-all-header">
+                <div class="header-cell">View All</div>
+                <div class="header-cell file-size">File Size</div>
+                <div class="header-cell date">Date</div>
+                <div class="header-cell action">Action</div>
+            </div>
+            
+            <div class="reports-container">
+                <div class="report-row">
+                    <div class="report-name">
+                        <div class="report-icon document">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                        </div>
+                        Complete Blood Count (CBC)
+                    </div>
+                    <div class="file-size">28.50 KB</div>
+                    <div class="date">6/8/2024</div>
+                    <div class="action">
+                        <button class="action-btn view">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                        <button class="action-btn delete">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                <line x1="10" y1="11" x2="10" y2="17"/>
+                                <line x1="14" y1="11" x2="14" y2="17"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="report-row">
+                    <div class="report-name">
+                        <div class="report-icon flask">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 3h6v4l3 8v6H6v-6l3-8V3z"/>
+                                <path d="M10 9h4"/>
+                            </svg>
+                        </div>
+                        Blood Glucose Test
+                    </div>
+                    <div class="file-size">15.00 KB</div>
+                    <div class="date">2/9/2024</div>
+                    <div class="action">
+                        <button class="action-btn view">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                        <button class="action-btn delete">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                <line x1="10" y1="11" x2="10" y2="17"/>
+                                <line x1="14" y1="11" x2="14" y2="17"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="report-row">
+                    <div class="report-name">
+                        <div class="report-icon document">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                        </div>
+                        Liver Function Test (LFT)
+                    </div>
+                    <div class="file-size">20.70 KB</div>
+                    <div class="date">8/5/2024</div>
+                    <div class="action">
+                        <button class="action-btn view">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                        <button class="action-btn delete">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 1 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                <line x1="10" y1="11" x2="10" y2="17"/>
+                                <line x1="14" y1="11" x2="14" y2="17"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="report-row">
+                    <div class="report-name">
+                        <div class="report-icon flask">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 3h6v4l3 8v6H6v-6l3-8V3z"/>
+                                <path d="M10 9h4"/>
+                            </svg>
+                        </div>
+                        Kidney Function Test (KFT)
+                    </div>
+                    <div class="file-size">18.50 KB</div>
+                    <div class="date">9/3/2024</div>
+                    <div class="action">
+                        <button class="action-btn view">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                        <button class="action-btn delete">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                <line x1="10" y1="11" x2="10" y2="17"/>
+                                <line x1="14" y1="11" x2="14" y2="17"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="report-row">
+                    <div class="report-name">
+                        <div class="report-icon document">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                        </div>
+                        Lipid Profile Test
+                    </div>
+                    <div class="file-size">30.90 KB</div>
+                    <div class="date">2/7/2024</div>
+                    <div class="action">
+                        <button class="action-btn view">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                        <button class="action-btn delete">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                <line x1="10" y1="11" x2="10" y2="17"/>
+                                <line x1="14" y1="11" x2="14" y2="17"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="report-row">
+                    <div class="report-name">
+                        <div class="report-icon flask">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 3h6v4l3 8v6H6v-6l3-8V3z"/>
+                                <path d="M10 9h4"/>
+                            </svg>
+                        </div>
+                        Alpha-L-Fucosidase Test
+                    </div>
+                    <div class="file-size">16.60 KB</div>
+                    <div class="date">7/2/2024</div>
+                    <div class="action">
+                        <button class="action-btn view">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                        <button class="action-btn delete">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                <line x1="10" y1="11" x2="10" y2="17"/>
+                                <line x1="14" y1="11" x2="14" y2="17"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="back-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5"/>
+                <polyline points="12 19 5 12 12 5"/>
+            </svg>
+        </button>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const { jsPDF } = window.jspdf;
+            const downloadBtn = document.querySelector('#download-report-btn');
+            const backBtn = document.querySelector('.back-btn');
+            const loadingOverlay = document.querySelector('#loading-overlay');
+            
+            // زرار الرجوع
+            backBtn.addEventListener('click', function() {
+                alert('Back!');
+            });
+            
+            // زرار الداونلود
+            downloadBtn.addEventListener('click', function() {
+                // Disable button and show loading overlay
+                downloadBtn.classList.add('disabled');
+                downloadBtn.disabled = true;
+                loadingOverlay.style.display = 'flex';
+                
+                // Simulate async operation for PDF generation
+                setTimeout(() => {
+                    const doc = new jsPDF();
+
+                    doc.setFontSize(12);
+
+                    // الصفحة الأولى
+                    doc.text("Patient Report Form", 10, 10);
+                    doc.text("Prepared by: Paramedic Sarah Mohamed", 10, 20);
+                    doc.text("Capital Emergency Services", 10, 30);
+                    doc.text("Date: May 17, 2025", 10, 40);
+                    doc.text("URN: CES-2025-201089", 10, 50);
+                    doc.text("Confidential Document", 10, 60);
+                    doc.text("Incident Details", 10, 80);
+                    doc.text("Date: May 17, 2025", 10, 90);
+                    doc.text("Time On Scene: 09:15 AM", 10, 100);
+                    doc.text("Time Off Scene: 09:45 AM", 10, 110);
+                    doc.text("Time EMS Arrived: 09:10 AM", 10, 120);
+                    doc.text("Firearms Deployment: No", 10, 130);
+                    doc.text("Transport: Land Ambulance", 10, 140);
+                    doc.text("Hospital: Cairo General Hospital", 10, 150);
+                    doc.text("Patient Information", 10, 170);
+                    doc.text("Name: Jana Mostafa", 10, 180);
+                    doc.text("Age: 44 years", 10, 190);
+                    doc.text("Sex: Female", 10, 200);
+                    doc.text("Address: 123 Nile Street, Cairo, Egypt", 10, 210);
+                    doc.text("Contact: +201234567890", 10, 220);
+                    doc.text("Mechanism of Injury", 10, 240);
+                    doc.text("- Primary Mechanism: Vehicle RTC", 10, 250);
+                    doc.text("- Specific Incident: Front-seat passenger in car struck on driver's side", 10, 260, { maxWidth: 180 });
+                    doc.text("- Additional Factors: None", 10, 280);
+
+                    // الصفحة الثانية
+                    doc.addPage();
+                    doc.text("Ambulance Service: Capital Emergency Services", 10, 10);
+                    doc.text("Injuries", 10, 30);
+                    doc.text("- Head/Neck: Mild concussion suspected, no visible lacerations, headache and dizziness", 10, 40, { maxWidth: 180 });
+                    doc.text("- Chest: Bruising from seatbelt, no rib fractures or pneumothorax", 10, 60, { maxWidth: 180 });
+                    doc.text("- Abdomen: No tenderness or distension", 10, 80);
+                    doc.text("- Extremities: Minor abrasions on left forearm, no fractures", 10, 90);
+                    doc.text("- Spinal: No pain or tenderness, full range of motion", 10, 100);
+                    doc.text("Vital Signs and Observations", 10, 120);
+                    doc.text("On Arrival: Pulse 88, RR 18, BP 145/92, SpO2 96%, GCS 14, Pain 4", 10, 130, { maxWidth: 180 });
+                    doc.text("09:20 AM: Pulse 85, RR 16, BP 142/90, SpO2 97%, GCS 14, Pain 3", 10, 150, { maxWidth: 180 });
+                    doc.text("09:30 AM: Pulse 82, RR 16, BP 140/88, SpO2 98%, GCS 15, Pain 3", 10, 170, { maxWidth: 180 });
+                    doc.text("Interventions", 10, 190);
+                    doc.text("- Airway: Patent, no intervention required", 10, 200);
+                    doc.text("- Breathing: Oxygen via nasal cannula at 2 L/min", 10, 210);
+                    doc.text("- Circulation: IV access, 500 mL saline", 10, 220);
+                    doc.text("- Disability: Cervical collar applied, removed after spinal clearance", 10, 230);
+                    doc.text("- Exposure: Kept warm with blankets", 10, 240);
+                    doc.text("- Medications: Paracetamol 1g IV", 10, 250);
+                    doc.text("- Procedures: Abrasions cleaned and dressed", 10, 260);
+                    doc.text("Notes", 10, 280);
+                    doc.text("- Patient alert, history of hypertension and type 2 diabetes", 10, 290);
+
+                    // الصفحة الثالثة
+                    doc.addPage();
+                    doc.text("Ambulance Service: Capital Emergency Services", 10, 10);
+                    doc.text("- Medications: Lisinopril 10mg, Amlodipine 5mg, Metformin 500mg twice daily", 10, 30, { maxWidth: 180 });
+                    doc.text("- Allergies: Penicillin (rash)", 10, 50);
+                    doc.text("- Patient wearing seatbelt, no airbag deployment", 10, 60);
+                    doc.text("- Police on scene, no alcohol/drugs", 10, 70);
+                    doc.text("- Transported to Cairo General Hospital for CT head scan", 10, 80);
+                    doc.text("Handover Information", 10, 100);
+                    doc.text("- Receiving Facility: Cairo General Hospital, ED", 10, 110);
+                    doc.text("- Handover To: Dr. Khaled Ahmed", 10, 120);
+                    doc.text("- Time of Handover: 10:00 AM", 10, 130);
+                    doc.text("- Key Points: 44-year-old female, RTC, suspected concussion, stable vitals", 10, 140, { maxWidth: 180 });
+                    doc.text("Paramedic Notes", 10, 160);
+                    doc.text("Patient cooperative, no deterioration, vitals stabilized, pain reduced", 10, 170, { maxWidth: 180 });
+                    doc.text("Sarah Mohamed, Paramedic", 10, 190);
+                    doc.text("Contact: +209876543210", 10, 200);
+                    doc.text("Email: sarah.mohamed@capitalems.org", 10, 210);
+
+                    // حفظ الملف وتحميله على الجهاز
+                    doc.save('pt.pdf');
+
+                    // Re-enable button and hide loading overlay
+                    downloadBtn.classList.remove('disabled');
+                    downloadBtn.disabled = false;
+                    loadingOverlay.style.display = 'none';
+                }, 500); // Simulate a slight delay for the loading effect
+            });
+            
+            // إضافة أنيميشن للـ report rows
+            const reportRows = document.querySelectorAll('.report-row');
+            reportRows.forEach(row => {
+                row.addEventListener('mouseover', function() {
+                    this.style.transform = 'translateX(5px)';
+                });
+                
+                row.addEventListener('mouseout', function() {
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

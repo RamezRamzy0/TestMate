@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Treatment Plan</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    :root {
+      --primary-color: #ffcc00;
+      --secondary-color: #ffd633;
+      --accent-color: #ffdb4d;
+      --success-color: #48bb78;
+      --warning-color: #ed8936;
+      --danger-color: #e53e3e;
+      --button-color: #fff8e1;
+      --button-hover: #fff2cc;
+      --light-bg: #f7fafc;
+      --dark-text: #2d3748;
+      --medium-text: #4a5568;
+      --light-text: #718096;
+      --white: #fff;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      --border-radius: 8px;
+      --transition-speed: 0.3s;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      background-color: var(--light-bg);
+    }
+
+    .container {
+      max-width: 100%;
+      min-height: 100vh;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: var(--dark-text);
+      padding: 20px;
+      border-radius: 0 0 12px 12px;
+      box-shadow: var(--shadow);
+      position: relative;
+      z-index: 10;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .page-title {
+      font-size: 18px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .back-button {
+      background: var(--accent-color);
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .back-button:hover {
+      background: #ffe066;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .back-button svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--dark-text);
+    }
+
+    .patient-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .patient-avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: var(--white);
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: var(--primary-color);
+      overflow: hidden;
+      transition: border-color var(--transition-speed);
+    }
+
+    .patient-details {
+      flex: 1;
+    }
+
+    .patient-name {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: var(--dark-text);
+    }
+
+    .patient-meta {
+      display: flex;
+      gap: 15px;
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    .patient-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .content {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+      z-index: 5;
+    }
+
+    .card {
+      background-color: var(--white);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    }
+
+    .card:hover {
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--dark-text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title-icon {
+      background-color: rgba(255, 204, 0, 0.1);
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-color);
+    }
+
+    .card-action {
+      color: var(--primary-color);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color var(--transition-speed);
+    }
+
+    .card-action:hover {
+      color: var(--accent-color);
+    }
+
+    .treatment-timeline, .medication-timeline {
+      position: relative;
+      padding-left: 30px;
+      margin-top: 10px;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-bottom: 20px;
+    }
+
+    .timeline-item:last-child {
+      padding-bottom: 0;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -30px;
+      top: 0;
+      height: 100%;
+      width: 2px;
+      background-color: #e2e8f0;
+    }
+
+    .timeline-item::after {
+      content: '';
+      position: absolute;
+      left: -36px;
+      top: 4px;
+      height: 12px;
+      width: 12px;
+      border-radius: 50%;
+      border: 2px solid var(--primary-color);
+      background-color: var(--white);
+    }
+
+    .timeline-item.active::after {
+      background-color: var(--primary-color);
+    }
+
+    .timeline-item.completed::after {
+      background-color: var(--success-color);
+      border-color: var(--success-color);
+    }
+
+    .timeline-content {
+      background-color: #f8fafc;
+      padding: 12px;
+      border-radius: var(--border-radius);
+      border-left: 3px solid var(--primary-color);
+      transition: transform var(--transition-speed);
+      position: relative;
+    }
+
+    .timeline-content:hover {
+      transform: translateX(3px);
+    }
+
+    .timeline-item.active .timeline-content {
+      border-left-color: var(--primary-color);
+      background-color: rgba(255, 204, 0, 0.05);
+    }
+
+    .timeline-item.completed .timeline-content {
+      border-left-color: var(--success-color);
+    }
+
+    .timeline-item.upcoming .timeline-content {
+      border-left-color: var(--light-text);
+      opacity: 0.8;
+    }
+
+    .timeline-title {
+      font-weight: 600;
+      color: var(--dark-text);
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .timeline-description {
+      font-size: 14px;
+      color: var(--medium-text);
+      line-height: 1.4;
+    }
+
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-left: 8px;
+    }
+
+    .status-tag.active {
+      background-color: rgba(255, 204, 0, 0.1);
+      color: var(--primary-color);
+    }
+
+    .status-tag.completed {
+      background-color: rgba(72, 187, 120, 0.1);
+      color: var(--success-color);
+    }
+
+    .status-tag.upcoming {
+      background-color: rgba(113, 128, 150, 0.1);
+      color: var(--light-text);
+    }
+
+    .medication-details {
+      margin-top: 8px;
+    }
+
+    .medication-dosage {
+      font-size: 14px;
+      color: var(--medium-text);
+    }
+
+    .medication-frequency {
+      font-size: 12px;
+      color: var(--light-text);
+      margin-top: 2px;
+    }
+
+    .medication-timing {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .timing-pill {
+      background-color: rgba(255, 204, 0, 0.1);
+      color: var(--primary-color);
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .delete-button {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--danger-color);
+      transition: color var(--transition-speed);
+    }
+
+    .delete-button:hover {
+      color: #c53030;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .action-button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      background-color: var(--button-color);
+      color: var(--primary-color);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+    }
+
+    .action-button:hover {
+      background-color: var(--button-hover);
+      transform: translateY(-2px);
+    }
+
+    .action-button.primary {
+      background-color: var(--primary-color);
+      color: var(--dark-text);
+    }
+
+    .action-button.primary:hover {
+      background-color: #e6b800;
+    }
+
+    .progress-section {
+      margin-top: 10px;
+    }
+
+    .progress-item {
+      margin-bottom: 15px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .progress-label {
+      font-size: 14px;
+      color: var(--dark-text);
+      font-weight: 500;
+    }
+
+    .progress-percentage {
+      font-size: 14px;
+      color: var(--primary-color);
+      font-weight: 500;
+    }
+
+    .progress-bar-bg {
+      height: 8px;
+      background-color: #e2e8f0;
+      border-radius: 4px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background-color: var(--primary-color);
+      transition: width 0.5s ease-out;
+    }
+
+    .bottom-nav {
+      background-color: var(--white);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      position: sticky;
+      bottom: 0;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
+      animation: fadeIn 0.6s ease-out;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+      padding: 5px 15px;
+    }
+
+    .nav-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-text {
+      font-size: 12px;
+      color: var(--light-text);
+    }
+
+    .nav-item.active .nav-icon {
+      color: var(--primary-color);
+    }
+
+    .nav-item.active .nav-text {
+      color: var(--primary-color);
+      font-weight: 500;
+    }
+
+    .nav-item:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: var(--white);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      width: 90%;
+      max-width: 500px;
+      box-shadow: var(--shadow);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--dark-text);
+    }
+
+    .modal-close {
+      cursor: pointer;
+      font-size: 24px;
+      color: var(--light-text);
+    }
+
+    .modal-close:hover {
+      color: var(--dark-text);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      color: var(--dark-text);
+      margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      font-size: 14px;
+      color: var(--dark-text);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    .form-group select[multiple] {
+      height: 100px;
+    }
+
+    .form-note {
+      font-size: 12px;
+      color: var(--light-text);
+      margin-top: 5px;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .container {
+     margin-top: 20px;
+     display: flex;
+     min-height: 100vh;
+    }
+     .top-nav {
+      width: 100%;
+      height: 60px;
+      background-color: var(--white);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 40px;
+      box-shadow: var(--shadow);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--dark-text);
+    }
+
+    .nav-items {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-item {
+      padding: 10px 0;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--medium-text);
+      border-bottom: 2px solid transparent;
+      transition: color 0.3s, border-bottom 0.3s;
+    }
+
+    .nav-item:hover {
+      color: var(--dark-text);
+    }
+
+    .nav-item.active {
+      color: var(--dark-text);
+      border-bottom: 2px solid var(--primary-color);
+    }
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+   <div class="container">
+    <div class="top-nav">
+      <div class="logo">Test Mate</div>
+      <div class="nav-items">
+        <div class="nav-item active">Home</div>
+        <div class="nav-item">Profile</div>
+        <div class="nav-item">Search</div>
+        <div class="nav-item">Settings</div>
+        
+      </div>
+    </div>
+<br>
+  <div class="container">
+    <div class="header">
+      <div class="header-top">
+        <div style="width: 36px;"></div>
+      </div>
+      <div class="patient-info">
+        <div class="patient-avatar">
+         👤
+        </div>
+        <div class="patient-details">
+          <div class="patient-name">Jana Mostafa</div>
+          <div class="patient-meta">
+            <div class="patient-meta-item">
+              <span>📅</span>
+              <span>44 years</span>
+            </div>
+            <div class="patient-meta-item">
+              <span>📋</span>
+              <span>ID: 201089</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="card" id="treatment-summary-card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-title-icon">📋</div>
+            Treatment Summary
+          </div>
+          <div class="card-action">Edit</div>
+        </div>
+        <div class="progress-section">
+          <div class="progress-item">
+            <div class="progress-header">
+              <div class="progress-label">Overall Progress</div>
+              <div class="progress-percentage">65%</div>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" style="width: 65%;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="treatment-timeline">
+          <div class="timeline-item completed">
+            <div class="timeline-date">March 15, 2025</div>
+            <div class="timeline-content">
+              <div class="timeline-title">
+                Initial Consultation
+                <span class="status-tag completed">Completed</span>
+              </div>
+              <div class="timeline-description">
+                Complete health assessment and diagnosis of chronic hypertension. Treatment plan created and medications prescribed.
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item completed">
+            <div class="timeline-date">March 29, 2025</div>
+            <div class="timeline-content">
+              <div class="timeline-title">
+                Blood Pressure Check
+                <span class="status-tag completed">Completed</span>
+              </div>
+              <div class="timeline-description">
+                Follow-up appointment to monitor blood pressure levels and medication response. Minor adjustment to dosage made.
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item active">
+            <div class="timeline-date">April 12, 2025</div>
+            <div class="timeline-content">
+              <div class="timeline-title">
+                Monthly Check-up
+                <span class="status-tag active">Today</span>
+              </div>
+              <div class="timeline-description">
+                Comprehensive review of treatment efficacy. Blood tests scheduled. Adjustment to treatment plan as needed.
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item upcoming">
+            <div class="timeline-date">May 10, 2025</div>
+            <div class="timeline-content">
+              <div class="timeline-title">
+                Progress Evaluation
+                <span class="status-tag upcoming">Upcoming</span>
+              </div>
+              <div class="timeline-description">
+                Evaluation of overall progress and medication efficacy. Decision point for long-term treatment approach.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="medications-card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-title-icon">💊</div>
+            Current Medications
+          </div>
+          <div class="card-action" id="add-medication">Add</div>
+        </div>
+        <div class="medication-timeline">
+          <div class="timeline-item active">
+            <div class="timeline-date">March 15, 2025</div>
+            <div class="timeline-content">
+              <div class="timeline-title">
+                Lisinopril
+                <span class="status-tag active">Active</span>
+              </div>
+              <div class="medication-details">
+                <div class="medication-dosage">10mg</div>
+                <div class="medication-frequency">Once daily</div>
+                <div class="medication-timing">
+                  <span class="timing-pill">Morning</span>
+                  <span class="timing-pill">With Food</span>
+                </div>
+              </div>
+              <div class="delete-button">✕</div>
+            </div>
+          </div>
+          <div class="timeline-item active">
+            <div class="timeline-date">March 15, 2025</div>
+            <div class="timeline-content">
+              <div class="timeline-title">
+                Amlodipine
+                <span class="status-tag active">Active</span>
+              </div>
+              <div class="medication-details">
+                <div class="medication-dosage">5mg</div>
+                <div class="medication-frequency">Once daily</div>
+                <div class="medication-timing">
+                  <span class="timing-pill">Evening</span>
+                  <span class="timing-pill">Before Dinner</span>
+                </div>
+              </div>
+              <div class="delete-button">✕</div>
+            </div>
+          </div>
+          <div class="timeline-item active">
+            <div class="timeline-date">March 15, 2025</div>
+            <div class="timeline-content">
+              <div class="timeline-title">
+                Aspirin
+                <span class="status-tag active">Active</span>
+              </div>
+              <div class="medication-details">
+                <div class="medication-dosage">81mg</div>
+                <div class="medication-frequency">Once daily</div>
+                <div class="medication-timing">
+                  <span class="timing-pill">Morning</span>
+                </div>
+              </div>
+              <div class="delete-button">✕</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+   
+
+    <!-- Modal for Adding Medication -->
+    <div class="modal" id="medication-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title">Add New Medication</div>
+          <div class="modal-close" id="modal-close">×</div>
+        </div>
+        <div class="form-group">
+          <label for="medication-name">Medication Name</label>
+          <input type="text" id="medication-name" placeholder="Enter medication name" required>
+        </div>
+        <div class="form-group">
+          <label for="medication-dosage">Dosage</label>
+          <input type="text" id="medication-dosage" placeholder="e.g., 10mg" required>
+        </div>
+        <div class="form-group">
+          <label for="medication-frequency">Frequency</label>
+          <select id="medication-frequency" required>
+            <option value="Once daily">Once daily</option>
+            <option value="Twice daily">Twice daily</option>
+            <option value="Three times daily">Three times daily</option>
+            <option value="As needed">As needed</option>
+          </select>
+        </div>
+       ,
+        <div class="form-group">
+          <label for="medication-timing">Timing</label>
+          <select id="medication-timing" multiple required>
+            <option value="Morning">Morning</option>
+            <option value="Evening">Evening</option>
+            <option value="With Food">With Food</option>
+            <option value="Before Dinner">Before Dinner</option>
+          </select>
+          <div class="form-note">Hold Ctrl (or Cmd) to select multiple options.</div>
+        </div>
+        <div class="modal-actions">
+          <button class="action-button" id="modal-cancel">Cancel</button>
+          <button class="action-button primary" id="modal-save">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      try {
+        // Animate cards with staggered appearance
+        const cards = document.querySelectorAll('.card');
+        cards.forEach((card, index) => {
+          setTimeout(() => {
+            card.style.animation = `slideIn 0.5s ease-out forwards`;
+          }, 200 + (index * 100));
+        });
+        
+        // Add hover effect to action buttons
+        const actionButtons = document.querySelectorAll('.action-button');
+        actionButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            button.style.opacity = '0.8';
+            setTimeout(() => {
+              button.style.opacity = '1';
+            }, 200);
+          });
+        });
+        
+        // Make navigation items interactive
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+          item.addEventListener('click', () => {
+            navItems.forEach(navItem => {
+              navItem.classList.remove('active');
+            });
+            item.classList.add('active');
+            item.style.opacity = '0.8';
+            setTimeout(() => {
+              item.style.opacity = '1';
+            }, 200);
+          });
+        });
+        
+        // Add back button functionality
+        const backButton = document.querySelector('.back-button');
+        backButton.addEventListener('click', () => {
+          backButton.style.opacity = '0.8';
+          setTimeout(() => {
+            backButton.style.opacity = '1';
+            alert('Navigate back to patient profile');
+          }, 200);
+        });
+        
+        // Function to apply hover effects to timeline items
+        function applyTimelineHover() {
+          const timelineContents = document.querySelectorAll('.timeline-content');
+          timelineContents.forEach(content => {
+            content.addEventListener('mouseenter', () => {
+              content.style.transform = 'translateX(3px)';
+            });
+            content.addEventListener('mouseleave', () => {
+              content.style.transform = 'translateX(0)';
+            });
+          });
+        }
+        
+        // Apply hover effects initially
+        applyTimelineHover();
+
+        // Modal functionality for adding medication
+        const modal = document.getElementById('medication-modal');
+        const addMedicationBtn = document.getElementById('add-medication');
+        const closeModalBtn = document.getElementById('modal-close');
+        const cancelModalBtn = document.getElementById('modal-cancel');
+        const saveModalBtn = document.getElementById('modal-save');
+        const medicationTimeline = document.querySelector('.medication-timeline');
+
+        addMedicationBtn.addEventListener('click', () => {
+          modal.style.display = 'flex';
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+          modal.style.display = 'none';
+          resetForm();
+        });
+
+        cancelModalBtn.addEventListener('click', () => {
+          modal.style.display = 'none';
+          resetForm();
+        });
+
+        saveModalBtn.addEventListener('click', () => {
+          try {
+            const name = document.getElementById('medication-name').value.trim();
+            const dosage = document.getElementById('medication-dosage').value.trim();
+            const frequency = document.getElementById('medication-frequency').value;
+            const timingOptions = Array.from(document.getElementById('medication-timing').selectedOptions).map(option => option.value);
+
+            if (name && dosage && frequency && timingOptions.length > 0) {
+              const newMedication = document.createElement('div');
+              newMedication.classList.add('timeline-item', 'active');
+              newMedication.innerHTML = `
+                <div class="timeline-date">${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+                <div class="timeline-content">
+                  <div class="timeline-title">
+                    ${name}
+                    <span class="status-tag active">Active</span>
+                  </div>
+                  <div class="medication-details">
+                    <div class="medication-dosage">${dosage}</div>
+                    <div class="medication-frequency">${frequency}</div>
+                    <div class="medication-timing">
+                      ${timingOptions.map(timing => `<span class="timing-pill">${timing}</span>`).join('')}
+                    </div>
+                  </div>
+                  <div class="delete-button">✕</div>
+                </div>
+              `;
+              medicationTimeline.appendChild(newMedication);
+              modal.style.display = 'none';
+              resetForm();
+              applyTimelineHover(); // Re-apply hover effects for new item
+              applyDeleteButtonListeners(); // Re-apply delete button listeners
+            } else {
+              alert('Please fill in all fields with valid values.');
+            }
+          } catch (error) {
+            console.error('Error saving medication:', error);
+            alert('An error occurred while adding the medication.');
+          }
+        });
+
+        // Function to apply delete button listeners
+        function applyDeleteButtonListeners() {
+          const deleteButtons = document.querySelectorAll('.delete-button');
+          deleteButtons.forEach(button => {
+            button.addEventListener('click', () => {
+              try {
+                const timelineItem = button.closest('.timeline-item');
+                timelineItem.remove();
+              } catch (error) {
+                console.error('Error deleting medication:', error);
+                alert('An error occurred while deleting the medication.');
+              }
+            });
+          });
+        }
+
+        // Apply delete button listeners initially
+        applyDeleteButtonListeners();
+
+        function resetForm() {
+          document.getElementById('medication-name').value = '';
+          document.getElementById('medication-dosage').value = '';
+          document.getElementById('medication-frequency').value = 'Once daily';
+          const timingSelect = document.getElementById('medication-timing');
+          Array.from(timingSelect.options).forEach(option => option.selected = false);
+        }
+      } catch (error) {
+        console.error('Initialization error:', error);
+      }
+    });
+  </script>
+</body>
+</html>

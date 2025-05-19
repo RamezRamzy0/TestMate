@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Mate</title>
+  <style>
+    :root {
+      --primary-color: #ffcc00;
+      --secondary-color: #ffcc00;
+      --accent-color: #ff7e5f;
+      --button-color: #ffcc00;
+      --button-hover: #e6b800;
+      --light-bg: #f5f9fc;
+      --dark-text: #333;
+      --medium-text: #555;
+      --light-text: #777;
+      --white: #fff;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --border-radius: 12px;
+      --allergy-bg: #ffcc001a;
+      --transition-speed: 0.3s;
+    }
+    * {
+
+      
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    html, body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    
+    .container {
+      width: 100%;
+      min-height: 100vh;
+      margin: 0;
+      background-color: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      
+    }
+    
+    
+    .provider-header {
+      background: linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(77 1 77) 86%);
+      background-size: cover;
+      color: white;
+
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .header-content {
+      padding: 20px;
+      max-width: 60%;
+    }
+
+    .header-image-container {
+  max-width: 35%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.header-image-container img {
+    /* mask-image: linear-gradient(to left, black, transparent); */
+    height: 245px;
+
+}
+
+    .header-content h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      color: white;
+    }
+    
+    .rating {
+      font-size: 14px;
+      color: #FFD700;
+      margin-top: 5px;
+    }
+    
+    .provider-details {
+      list-style-type: disc;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #FFD700;
+      padding-left: 20px;
+      margin: 0;
+    }
+    
+    
+    /* Rest of the styles unchanged from original */
+    .content-wrapper {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .appointment-section {
+      background-color: #f0f7ff;
+      padding: 20px;
+      margin: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    .appointment-section h3 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .appointment-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    
+    .date-picker {
+
+      cursor: pointer;
+      align-items: center;
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+
+   
+    }
+    
+    .book-now-btn {
+      background-color: #ffcc00;
+      color: #333;
+      border: none;
+      padding: 12px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 98%;
+      margin: 20px 0 15px 10px;
+      transition: background-color 0.3s;
+    }
+    
+    .book-now-btn:hover {
+      background-color: #e6b800;
+    }
+    
+    .map-section {
+      padding: 20px 25px 25px 25px;
+      background-color: #ffffff;
+      margin: 15px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    }
+    
+    .map-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 25px;
+      font-weight: 700;
+      font-size: 15px;
+      color: #222;
+    }
+    
+    .map-content-wrapper {
+      display: flex;
+      gap: 30px;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    
+    .map-container {
+      border-radius: 20px;
+      overflow: hidden;
+      height: 380px;
+      width: 65%;
+      position: relative;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+      background-color: #fefefe;
+    }
+    
+    .map-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 20px;
+    }
+    
+    .map-options {
+      display: flex;
+      justify-content: flex-start;
+      gap: 25px;
+      margin-top: 25px;
+    }
+    
+    .map-option {
+      text-align: center;
+      font-size: 14px;
+      color: #444;
+      font-weight: 600;
+    }
+    
+    .map-option-circle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 75px;
+      height: 75px;
+      background-color: #d9e6ff;
+      border-radius: 50%;
+      margin: 0 auto 10px;
+      border: 3px solid transparent;
+      cursor: pointer;
+      transition: border-color 0.3s, transform 0.3s;
+      box-shadow: 0 3px 10px rgba(0, 102, 204, 0.25);
+    }
+    
+    .map-option-circle.active {
+      border-color: #2a4db7;
+      transform: scale(1.15);
+      box-shadow: 0 6px 20px rgba(42, 77, 183, 0.5);
+    }
+    
+    .map-permissions {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 0;
+      width: 100%;
+    } 
+    
+    .permission-btn {
+      background-color: #a3b9ff;
+      border: none;
+      padding: 16px;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-weight: 700;
+      color: #0f1a4d;
+      box-shadow: 0 3px 10px rgba(42, 77, 183, 0.4);
+    }
+    
+    .permission-btn:hover {
+      background-color: #8a9fff;
+    }
+    
+    .faq-section {
+      padding: 20px;
+      flex: 1;
+    }
+    
+    .faq-section h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .faq-item {
+      border-bottom: 1px solid #ddd;
+      padding: 15px 0;
+      cursor: pointer;
+    }
+    
+    .faq-question {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 500;
+    }
+    
+    .faq-answer {
+      padding-top: 15px;
+      display: none;
+      color: #666;
+      line-height: 1.5;
+    }
+    
+    .faq-answer.active {
+      display: block;
+      animation: fadeIn 0.5s;
+    }
+    .price{
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideInUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes float {
+      0% {transform: translateY(0px);}
+      50% {transform: translateY(-8px);}
+      100% {transform: translateY(0px);}
+    }
+    
+    /* Apply animations to elements */
+    .provider-header, .appointment-section, .map-section, .faq-section {
+      animation: slideInUp 0.6s ease-out;
+    }
+    
+    .book-now-btn {
+      animation: bounce 2s infinite;
+    }
+    
+    .map-option-circle:hover {
+      animation: pulse 1s;
+    }
+    
+   
+    /* Responsive adjustments */
+    @media (min-width: 768px) {
+      .container {
+        max-width: 100%;
+        min-height: 0;
+      }
+      
+      .content-wrapper {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+    
+    @media (max-width: 767px) {
+      .container {
+        min-height: 0;
+      }
+    }
+ 
+    /* Responsive adjustments */
+    @media (min-width: 768px) {
+      .container {
+        max-width: 100%;
+        min-height: 0;
+      }
+      
+      .content-wrapper {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+    
+    @media (max-width: 767px) {
+      .container {
+        min-height: 0;
+      }
+    }
+
+.navbar .text-wrapper-3 {
+    position: relative;
+    width: auto;
+    font-family: "Manrope", Helvetica;
+    font-weight: 700;
+    color: #000000;
+    font-size: 24px;
+    letter-spacing: 0;
+    line-height: normal;
+    white-space: nowrap;
+    
+}
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    position: relative;
+    padding: 0px 20px;
+    background-color: var(--white);
+    box-shadow: var(--shadow);
+    border-radius: var(--border-radius);
+  }
+  
+  .navbar .logo-container {
+    display: flex;
+    align-items: center;
+    width: 180px;
+    max-height: 66px;
+
+  }
+
+  .navbar .logo-container img {
+    margin: -30px;
+    position: relative;
+    top: -10px;
+    height: 160px;
+    width: auto;
+  }
+  
+  .navbar .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .navbar .nav-link {
+    font-family: "Manrope", Helvetica, sans-serif;
+    font-weight: 600;
+    color: var(--dark-text);
+    font-size: 17px;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+    text-decoration: none;
+  }
+  
+  .navbar .nav-link:hover {
+    cursor: pointer;
+    color: var(--secondary-color);
+  }
+  
+  .navbar .nav-link.active {
+    color: var(--secondary-color);
+    font-weight: 700;
+  }
+  
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  
+  .animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .navbar .right-menu {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 20px;
+    position: relative;
+    width: 180px;
+  }
+  .navbar .avatar {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    background-image: url(https://c.animaapp.com/m91npn2umpacy3/img/avatar-base.svg);
+    background-size: 100% 100%;
+}
+.navbar .profile-dropdown {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 8px 8px 16px;
+    position: relative;
+    flex: 0 0 auto;
+    background-color: var(--white);
+    border-radius: 100px;
+    border: 1px solid;
+    border-color: #e5e7eb;
+}
+  </style>
+</head>
+<body>
+    <div class="container">
+      <div class="navbar">
+        <div class="logo-container">
+          <img class="whatsapp-image" src="https://c.animaapp.com/m91npn2umpacy3/img/whatsapp-image-2025-02-09-at-20-19-49-958c0d63-removebg-preview-.png" />
+          <div class="text-wrapper-3">Test Mate</div>
+        </div>
+        <div class="nav-links">
+          <a href="#" class="nav-link">Home</a>
+          <a class="nav-link">Search</a>
+          <a class="nav-link">Settings</a>
+        </div>
+        <div class="right-menu">
+          <a href="profile.html" class="profile-dropdown">
+            <img class="img" src="https://c.animaapp.com/m91npn2umpacy3/img/menu.svg" />
+            <div class="avatar"></div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+        <div class="provider-header">
+            <div class="header-content">
+                <h2>
+                    Al Mokhtabar
+                    <span class="rating">9.0 ⭐ (311 reviews)</span>
+                </h2>
+                <ul class="provider-details">
+                    <li>Advantages: Accurate results, home visits available,</li>
+                    <li>multiple branches nearby,</li>
+                    <li>Working Hours: 8 AM - 10 PM (Daily).</li>
+                    <li>Contact Number: 19014</li>
+                </ul>
+                <p class="price">250 EGP</p>
+            </div>
+            <div class="header-image-container">
+              <img src="../Img/qlab.png" alt="Header Image" />
+            </div>
+            
+        </div>
+
+        <div class="content-wrapper">
+            <div class="appointment-section">
+                <h3>Schedule a medical test appointment</h3>
+                <p style="text-align:center; font-size:12px; color:#666; margin-bottom:15px;">(Choose the perfect lab for your tests)</p>
+
+                <a href="Appointment.html" class="appointment-form">
+
+                    <button class="book-now-btn">BOOK NOW</button>
+                </a>
+            </div>
+
+            <div class="map-section">
+            <div class="map-content-wrapper">
+                <div class="map-container" id="map" style="height: 500px; width: 100%;">
+                </div>
+            </div>
+            </div>
+
+            <div class="faq-section">
+                <h2>Frequently Asking Questions</h2>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        What reasons are there to make overall results?
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        Common reasons include regular health checkups, diagnosing symptoms, monitoring existing conditions, and preventive screening.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        How long does it take to receive test results?
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        Test results typically take 24-48 hours depending on the type of test.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        How long does it take to receive test results?
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer active">
+                        The time you'll need depends on the type of test. Most routine blood tests can easily be done within a few minutes to 24 hours, while specialized tests may take longer. This is an estimate about the time needed to get the results, not necessarily the time needed to complete the test.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Are there specials available to review and validate the results?
+                        <span>▼</span>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        What types of tests are available at this laboratory?
+                        <span>▼</span>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Are medical test vouchers still available?
+                        <span>▼</span>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        What measures are taken to ensure accurate results?
+                        <span>▼</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  <script>
+    // Add interactivity with JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show Al Mokhtabar logo
+      const logoImg = document.getElementById('logo-image');
+      if (logoImg) {
+        // Since we can't use external images, we're using a placeholder
+        // In a real implementation, you would use the actual logo image URL
+      }
+      
+      // Add click events to FAQ items
+      const faqItems = document.querySelectorAll('.faq-item');
+      faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        const answer = item.querySelector('.faq-answer');
+        
+        if (question && answer) {
+          question.addEventListener('click', () => {
+            // Close all other answers
+            document.querySelectorAll('.faq-answer').forEach(a => {
+              if (a !== answer) {
+                a.classList.remove('active');
+              }
+            });
+            
+            // Toggle current answer
+            answer.classList.toggle('active');
+            
+            // Update arrow
+            const arrow = question.querySelector('span');
+            if (arrow) {
+              arrow.textContent = answer.classList.contains('active') ? '▲' : '▼';
+            }
+          });
+        }
+      });
+      
+      // Add click events to map options
+      const mapOptions = document.querySelectorAll('.map-option-circle');
+      mapOptions.forEach(option => {
+        option.addEventListener('click', () => {
+          // Remove active class from all options
+          mapOptions.forEach(o => o.classList.remove('active'));
+          
+          // Add active class to clicked option
+          option.classList.add('active');
+        });
+      });
+      
+      // Animate BOOK NOW button with bounce effect
+      const bookButton = document.querySelector('.book-now-btn');
+      if (bookButton) {
+        bookButton.addEventListener('mouseover', () => {
+          bookButton.style.animation = 'none';
+          setTimeout(() => {
+            bookButton.style.animation = 'bounce 2s infinite';
+          }, 10);
+        });
+      }
+    });
+    function initMap() {
+        const location = { lat: 30.0444, lng: 31.2357 };
+        const map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 10,
+          center: location,
+        });
+        const marker = new google.maps.Marker({
+          position: location,
+          map: map,
+        });
+      }
+  </script>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDrNs5LBWFyCOn7Z7mGt3G9kiBC652ORK8&callback=initMap" async defer></script>
+
+</body>
+</html>

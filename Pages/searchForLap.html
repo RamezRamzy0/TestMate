@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Mate - Lab Listings</title>
+  <style>
+    /* Base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    html, body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #333;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      height: 100%;
+    }
+    
+    /* Navigation header */
+    .nav-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 20px 0;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    /* Back button styles */
+    .back-button {
+      color: #6c757d;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      font-size: 16px;
+      padding: 8px 15px;
+      border-radius: 20px;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .back-button:hover {
+      color: #495057;
+      background-color: #f1f3f5;
+      transform: translateY(-2px);
+    }
+    
+    .back-icon {
+      margin-right: 5px;
+      font-weight: bold;
+    }
+    
+    /* Navigation menu */
+    .nav-menu {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .nav-item {
+      color: #6c757d;
+      text-decoration: none;
+      font-size: 16px;
+      padding: 8px 15px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .nav-item:hover {
+      color: #3498db;
+      background-color: #f1f3f5;
+    }
+    
+    .sponsored-text {
+      color: #6c757d;
+      font-size: 14px;
+      margin: 30px 0 -15px;
+
+    }
+    
+    /* Search bar styles */
+    .search-container {
+      margin: 20px 0;
+      width: 100%;
+    }
+    
+    .search-bar {
+      width: 100%;
+      padding: 12px 20px;
+      font-size: 16px;
+      border: 1px solid #dee2e6;
+      border-radius: 25px;
+      outline: none;
+      transition: all 0.3s ease;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .search-bar:focus {
+      border-color: #3498db;
+      box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+    }
+    
+    .search-bar::placeholder {
+      color: #6c757d;
+    }
+    
+    /* Main content area */
+    .main-content {
+      min-height: 100vh;
+      padding-bottom: 20px;
+      position: relative;
+    top: -15;
+
+    }
+    
+    .filter-tabs {
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+      padding: 5px 0;
+      margin-bottom: 20px;
+      -webkit-overflow-scrolling: touch;
+      width: 100%;
+    }
+    
+    .filter-tab {
+      background-color: #f1f3f5;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 15px;
+      font-size: 14px;
+      color: #495057;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+    }
+    
+    .filter-tab:hover, .filter-tab.active {
+      background-color: #e9ecef;
+      color: #212529;
+    }
+    
+    .labs-container {
+      width: 100%;
+    }
+    
+    .lab-card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      display: flex;
+      overflow: hidden;
+      transform: translateY(20px);
+      opacity: 0;
+      animation: fadeIn 0.5s ease forwards;
+      width: 100%;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    
+    @keyframes fadeIn {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    .lab-card:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    
+    .lab-card:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    
+    /* Improved logo container styles */
+    .lab-logo-container {
+      width: 200px;
+      min-width: 200px;
+      height: 200px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow: hidden;
+      background-color: white;
+      border-right: 1px solid #eee;
+    }
+    
+    .lab-logo {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+    
+    .lab-info {
+      flex: 1;
+      padding: 20px;
+      position: relative;
+    }
+    
+    .lab-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+    
+    .advantages-list {
+      list-style-type: none;
+    }
+    
+    .advantages-list li {
+      padding: 3px 0;
+      display: flex;
+      align-items: flex-start;
+      font-size: 14px;
+      color: #495057;
+    }
+    
+    .advantages-list li::before {
+      content: "•";
+      margin-right: 8px;
+      color: #3498db;
+    }
+    
+    .rating {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    
+    .star {
+      color: #ffc107;
+      margin-right: 5px;
+    }
+    
+    .reviews {
+      color: #6c757d;
+      margin-left: 5px;
+    }
+    
+    .price {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-weight: 600;
+      color: #2ecc71;
+      font-size: 18px;
+    }
+    
+    .favorite-btn {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 22px;
+      color: #dee2e6;
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+    
+    .favorite-btn:hover {
+      transform: scale(1.1);
+    }
+    
+    .favorite-btn.active {
+      color: #ff6b6b;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    .lab-card:hover {
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+      transform: translateY(-3px);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255,255,255,0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      animation: fadeOut 1s ease forwards 1s;
+    }
+    
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 600px) {
+      .nav-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .nav-menu {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 10px;
+      }
+      
+      .nav-item {
+        flex: 1;
+        text-align: center;
+      }
+      
+      .lab-card {
+        flex-direction: column;
+      }
+      
+      .lab-logo-container {
+        width: 100%;
+        height: 120px;
+        min-height: auto;
+        border-right: none;
+        border-bottom: 1px solid #eee;
+      }
+      
+     .price {
+       position: absolute;
+       top: 20px;
+       right: 20px;
+       font-weight: 600;
+       color: black;
+       font-size: 18px;
+      }
+      
+      .favorite-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        bottom: auto;
+      }
+      
+      .search-bar {
+        font-size: 14px;
+        padding: 10px 15px;
+      }
+    }
+
+
+    .header {
+            display: flex;
+            width: 100%;
+            height: 58px;
+            align-items: center;
+            justify-content: center;
+            gap: 43.85px;
+            padding: 11.14px 5%;
+            /* position: fixed; */
+            top: 0;
+            left: 0;
+            background-color: var(--neutralwhite);
+            box-shadow: var(--shadow-4px);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            position: relative;
+
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            width: 200px;
+        }
+        .whatsapp-image {
+            right: 61px;
+            top: -10px;
+            position: relative;
+            width: 160px;
+            height: auto;
+            object-fit: contain;
+            margin-right: -100px;
+        }
+
+        .text-wrapper-3 {
+            position: relative;
+            width: auto;
+            font-family: "Manrope", Helvetica;
+            font-weight: 700;
+            color: #000000;
+            font-size: 24px;
+            letter-spacing: 0;
+            line-height: normal;
+            white-space: nowrap;
+        }
+  
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-link {
+            font-family: "Manrope", Helvetica;
+            font-weight: 600;
+            color: #000000;
+            font-size: 16px;
+            letter-spacing: 0;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .nav-link:hover {
+            color: #fdd10e;
+        }
+
+        .right-menu {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 22.27px;
+            position: relative;
+            width: 200px;
+        }
+  
+        .profile-dropdown {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 8px 8px 16px;
+            position: relative;
+            flex: 0 0 auto;
+            background-color: var(--white);
+            border-radius: 100px;
+            border: 1px solid;
+            border-color: #e5e7eb;
+        }
+
+        .img {
+            position: relative;
+            width: 24px;
+            height: 24px;
+        }
+        .avatar {
+            position: relative;
+            width: 32px;
+            height: 32px;
+            background-image: url(https://c.animaapp.com/m91npn2umpacy3/img/avatar-base.svg);
+            background-size: 100% 100%;
+        }
+  
+        .login-button {
+            background-color: rgba(253, 209, 14, 1);
+            color: black;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-link.active {
+    color: #fdd10e;
+    font-weight: 700;
+  }
+  
+  
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="navbar">
+      <div class="logo-container">
+        <img class="whatsapp-image" src="https://c.animaapp.com/m91npn2umpacy3/img/whatsapp-image-2025-02-09-at-20-19-49-958c0d63-removebg-preview-.png" />
+        <div class="text-wrapper-3">Test Mate</div>
+      </div>
+      <div class="nav-links">
+        <a href="./landingPage.html" class="nav-link">Home</a>
+        <a href="./searchForLap.html" class="nav-link action-button active ">Search</a>
+        <a href="./SettingsPage.html" class="nav-link">Settings</a>
+      </div>
+      
+     <div class="right-menu">
+
+<a href="profile.html" class="profile-dropdown">
+<img class="img" src="https://c.animaapp.com/m91npn2umpacy3/img/menu.svg" />
+<div class="avatar"></div>
+</a>
+<a href="./SignPage.html" class="login-button">Login</a>
+</div>
+    </div>
+  </header>
+  
+  <div class="main-content">
+    <div class="container">
+      
+      
+      <p class="sponsored-text">200+ premium labs available in Egypt, sponsored by Test Mate</p>
+      
+      <div class="search-container">
+        <input type="text" class="search-bar" placeholder="Search for labs..." aria-label="Search labs">
+      </div>
+      
+      <div class="filter-tabs">
+        <button class="filter-tab active">Fastest labs</button>
+        <button class="filter-tab">Most expensive labs</button>
+        <button class="filter-tab">Cheapest labs</button>
+        <button class="filter-tab">Nearest labs</button>
+        <button class="filter-tab">Less crowded labs</button>
+      </div>
+      
+      <div class="labs-container">
+        <a href="BLF.html" class="lab-card">
+          <div class="lab-logo-container">
+            <img src="../Img/qlab.png" alt="Q-Lab Logo" class="lab-logo">
+          </div>
+          <div class="lab-info">
+            <h2 class="lab-name">Q-Lab</h2>
+            <ul class="advantages-list">
+              <li>Accurate results with advanced technology</li>
+              <li>Home visits available upon request</li>
+              <li>Multiple branches across the city</li>
+              <li>Working Hours: 8 AM - 10 PM (Daily)</li>
+              <li>Contact: 19014</li>
+            </ul>
+            <div class="rating">
+              <span class="star">★</span>
+              <span>5.0</span>
+              <span class="reviews">(500 reviews)</span>
+            </div>
+            <div class="price">EGP 250</div>
+            <button class="favorite-btn">♡</button>
+          </div>
+        </a>
+        
+        <div class="lab-card">
+          <div class="lab-logo-container">
+            <img src="../Img/elporg.png" alt="Al Borg Lab Logo" class="lab-logo">
+          </div>
+          <div class="lab-info">
+            <h2 class="lab-name">Al Borg Lab</h2>
+            <ul class="advantages-list">
+              <li>Affordable prices with quality service</li>
+              <li>State-of-the-art equipment</li>
+              <li>Online results available within 24 hours</li>
+              <li>Working Hours: 9 AM - 9 PM (Daily)</li>
+              <li>Contact: 19800</li>
+            </ul>
+            <div class="rating">
+              <span class="star">★</span>
+              <span>4.8</span>
+              <span class="reviews">(240 reviews)</span>
+            </div>
+            <div class="price">EGP 500</div>
+            <button class="favorite-btn active">♥</button>
+          </div>
+        </div>
+        
+        <div class="lab-card">
+          <div class="lab-logo-container">
+            <img src="../Img/elmokhtaber.png" alt="Al Mokhtabar Lab Logo" class="lab-logo">
+          </div>
+          <div class="lab-info">
+            <h2 class="lab-name">Al Mokhtabar Lab</h2>
+            <ul class="advantages-list">
+              <li>Internationally accredited results</li>
+              <li>Home sample collection service</li>
+              <li>Express results available</li>
+              <li>Working Hours: 8 AM - 10 PM (Daily)</li>
+              <li>Contact: 19014</li>
+            </ul>
+            <div class="rating">
+              <span class="star">★</span>
+              <span>4.9</span>
+              <span class="reviews">(311 reviews)</span>
+            </div>
+            <div class="price">EGP 200</div>
+            <button class="favorite-btn">♡</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Favorite button functionality
+      const favButtons = document.querySelectorAll('.favorite-btn');
+      favButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          this.classList.toggle('active');
+          if (this.classList.contains('active')) {
+            this.textContent = '♥';
+            this.style.animation = 'pulse 0.5s ease';
+            setTimeout(() => {
+              this.style.animation = '';
+            }, 500);
+          } else {
+            this.textContent = '♡';
+          }
+        });
+      });
+      
+      // Filter tabs functionality
+      const filterTabs = document.querySelectorAll('.filter-tab');
+      filterTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          filterTabs.forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+          const labCards = document.querySelectorAll('.lab-card');
+          labCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+              card.style.opacity = '1';
+              card.style.transform = 'translateY(0)';
+              card.style.transition = 'all 0.5s ease';
+            }, 100 * index);
+          });
+        });
+      });
+      
+      // Search bar functionality
+      const searchBar = document.querySelector('.search-bar');
+      searchBar.addEventListener('input', function() {
+        const searchQuery = this.value.toLowerCase();
+        const labCards = document.querySelectorAll('.lab-card');
+        labCards.forEach(card => {
+          const labName = card.querySelector('.lab-name').textContent.toLowerCase();
+          if (labName.includes(searchQuery)) {
+            card.style.display = 'flex';
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+              card.style.opacity = '1';
+              card.style.transform = 'translateY(0)';
+              card.style.transition = 'all 0.5s ease';
+            }, 100);
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

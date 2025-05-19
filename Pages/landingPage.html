@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html>
+  <head>  
+    <title>Test Mate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+      emailjs.init('zRdi9jQY7pObD-URD');
+    </script>  
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../assets/css/LandGlobals.css" />
+    <link rel="stylesheet" href="../assets/css/LandStyleguide.css" />
+    <link rel="stylesheet" href="../assets/css/LandStyle.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <style>
+      body {
+        scroll-behavior: smooth;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+      
+     
+      .chatbot-floating-btn {
+        position: fixed;
+        bottom: 30px;
+        left: 30px;
+        width: 65px;
+        height: 65px;
+        background: linear-gradient(135deg, #fdd10e 0%, #ffad1e 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 1000;
+        box-shadow: 0 5px 25px rgba(253, 209, 14, 0.4);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      }
+      
+      .chatbot-icon {
+        width: 32px;
+        height: 32px;
+        color: #333;
+      }
+      
+      .pulse-animation {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: rgba(253, 209, 14, 0.4);
+        animation: pulse 2s infinite;
+        z-index: -1;
+      }
+      
+      @keyframes pulse {
+        0% { transform: scale(0.8); opacity: 0.7; }
+        70% { transform: scale(1.3); opacity: 0; }
+        100% { transform: scale(0.8); opacity: 0; }
+      }
+      
+      .chatbot-window {
+        position: fixed;
+        bottom: 110px;
+        left: 30px;
+        width: 380px;
+        height: 550px;
+        background: white;
+        border-radius: 18px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        z-index: 1001;
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        transform: translateY(30px);
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      
+      .chatbot-window.active {
+        display: flex;
+        transform: translateY(0);
+        opacity: 1;
+      }
+      
+      .chatbot-header {
+        background: linear-gradient(135deg, #fdd10e 0%, #ffad1e 100%);
+        padding: 15px 20px;
+        color: #333;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+      
+      .chatbot-header h3 {
+        margin: 0;
+        font-size: 18px;
+      }
+      
+      .chatbot-actions {
+        display: flex;
+        gap: 12px;
+      }
+      
+      .chatbot-action-btn {
+        background: rgba(255,255,255,0.3);
+        border: none;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: #333;
+      }
+      
+      .chatbot-action-btn:hover {
+        background: rgba(255,255,255,0.5);
+        transform: scale(1.1);
+      }
+      
+      #chatbotIframe {
+        flex: 1;
+        border: none;
+        transition: all 0.3s ease;
+      }
+      
+      .chatbot-floating-btn:hover {
+        transform: scale(1.1) rotate(8deg);
+        box-shadow: 0 8px 30px rgba(253, 209, 14, 0.5);
+      }
+      
+      .chatbot-window.fullscreen {
+        width: 100%;
+        height: 100vh;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        top: 0;
+        border-radius: 0;
+      }
+      
+      @media (max-width: 768px) {
+        .chatbot-floating-btn {
+          width: 60px;
+          height: 60px;
+          bottom: 25px;
+          left: 25px;
+        }
+        
+        .chatbot-window {
+          width: 92%;
+          right: 4%;
+          left: 4%;
+          bottom: 90px;
+          height: 65vh;
+          max-height: 550px;
+        }
+        
+        .chatbot-window.fullscreen {
+          height: 100vh;
+          bottom: 0;
+          border-radius: 0;
+        }
+        
+        .feedback-section {
+          padding: 20px 15px;
+        }
+      }
+      
+      .notification {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #4CAF50;
+        color: white;
+        padding: 18px 28px;
+        border-radius: 10px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+        z-index: 1002;
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        max-width: 350px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      
+      .notification.error {
+        background: #f44336;
+      }
+      
+      .notification.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      
+      .notification i {
+        font-size: 20px;
+      }
+      
+      .email-input-field {
+        margin-bottom: 25px;
+      }
+      
+      .email-input {
+        width: 100%;
+        padding: 14px 18px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.3s;
+      }
+      
+      .email-input:focus {
+        border-color: #f7c600;
+        box-shadow: 0 0 0 3px rgba(247, 198, 0, 0.2);
+        outline: none;
+      }
+      
+      .back-to-top {
+
+        position: fixed;
+    bottom: 33px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #f7c600, #ffaa00);
+    border-radius: 50%;
+    display: flex
+;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(247, 198, 0, 0.3);
+
+      }
+      
+      .back-to-top.visible {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      .back-to-top:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 7px 20px rgba(247, 198, 0, 0.4);
+      }
+      
+      a {
+        transition: all 0.2s;
+      }
+      
+      a:hover {
+        opacity: 0.8;
+      }
+
+      
+      
+      .section-title {
+        position: relative;
+        display: inline-block;
+        padding-bottom: 10px;
+      }
+      
+      .section-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(90deg, #f7c600, #ffaa00);
+        border-radius: 3px;
+      }
+      form {
+  overflow: visible;
+
+}
+
+.form-container {
+  overflow: visible;
+  padding-bottom: 30px; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.email-submit-btn {
+  background: linear-gradient(180deg, #f7c600, #ffaa00);
+  color: #333;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+      
+      .email-submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 7px 20px rgba(247, 198, 0, 0.4);
+      }
+      
+      .email-submit-btn:active {
+        transform: translateY(1px);
+      }
+      
+      .email-loading {
+        display: none;
+      }
+      
+      .email-success {
+        color: #4CAF50;
+        font-size: 14px;
+        text-align: center;
+        margin-top: 10px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="landing-page">
+      <div class="div">
+        <div class="overlap">
+          <header class="header">
+            <div class="navbar">
+              <div class="logo-container">
+                <img class="whatsapp-image" src="https://c.animaapp.com/m91npn2umpacy3/img/whatsapp-image-2025-02-09-at-20-19-49-958c0d63-removebg-preview-.png" />
+                <div class="text-wrapper-3">Test Mate</div>
+              </div>
+              <div class="nav-links">
+                <a href="#" class="nav-link active">Home</a>
+                <a href="#services" class="nav-link">Services</a>
+                <a href="#about" class="nav-link">About Us</a>
+                <a href="#contact" class="nav-link">Contact</a>
+              </div>
+              
+              <div class="right-menu">
+                <div class="profile-dropdown" id="profileDropdown">
+                  <img class="img menu-icon" id="menuIcon" src="https://c.animaapp.com/m91npn2umpacy3/img/menu.svg" alt="Menu" />
+                  <a href="profile.html" class="avatar"></a>
+                  <div class="dropdown-menu" id="dropdownMenu" style="display: none;">
+                    <a href="profile.html" class="dropdown-item">Profile</a>
+                    <a href="SettingsPage.html" class="dropdown-item set">Settings</a>
+                    <a href="Logout.html" class="dropdown-item">Logout</a>
+                  </div>
+                </div>
+                <a href="./SignPage.html" class="login-button">Login</a>
+              </div>
+            </div>
+          </header>
+          
+          <div class="dot">
+            <div class="ellipse"></div>
+            <div class="ellipse-2"></div>
+            <div class="ellipse-2"></div>
+          </div>
+          <div class="depth-frame">
+            <div class="search-bar">
+              <div class="search-input-container">
+                <img class="search-icon" src="https://c.animaapp.com/m91npn2umpacy3/img/24-user-interface-search.svg" />
+                <input type="text" placeholder="Search for tests..." />
+              </div>
+              <a href="searchForLap.html">
+                <button class="search-button">Search</button>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="home" id="services">
+          <div class="clients">
+            <div class="section-title-wrapper">
+              <div class="section-title">Our Services</div>
+            </div>
+          </div>
+          <div class="community">
+            <div class="community-2">
+              <p class="p">Complete care for you in one place</p>
+              <p style="font-size: 16px;" class="description">Who is Test Mate suitable for?</p>
+            </div>
+          </div>
+        </div>
+        <div class="calender" id="about">
+          <div class="body">
+            <div class="unlock">
+              <div class="unlock-2">
+                <div class="frame">
+                  <div class="mobile-login-rafiki">
+                    <img class="main-characters" src="../Img/char.png" alt="Characters Image" />
+                  </div>
+                </div>
+                <div class="frame-wrapper">
+                  <div class="frame-2">
+                    <p class="text-wrapper-4">Why Should You Use Our Website?</p>
+                    <p class="when-joining-the" style="font-size: 15px;">
+                      <span class="span">Test Mate makes healthcare simple and accessible:</span><br />
+                      <span class="span"> Easily search for nearby labs offering tests and scans.</span><br />
+                      <span class="span"> Compare prices, time slots, and locations to choose what suits you best.</span><br />
+                      <span class="span"> Keep a digital record of all your medical tests and scans in one place.</span><br />
+                      <span class="span"> Access services anytime, from anywhere—fully online and stress-free.</span><br />
+                      <span class="span"> Save valuable time and effort with our user-friendly platform.</span><br />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer" id="contact">
+          <a href="./SignPage.html" class="button-wrapper" id="start-button">
+            <div class="button">
+              <div class="label">Start</div>
+              <img class="element-arrows-directions" src="../Img/arrow.png" />
+            </div>
+          </a>
+          <div class="footer-big">
+            <div class="company-info">
+              <div class="copyright">
+                <p class="copyright-2">
+                  <span class="text--6"><br />Test Mate<br /></span>
+                  <span class="text-wrapper-6"><br /><br /><br />Copyright © 2020 Landify UI Kit.</span>
+                </p>
+                <div class="text-wrapper-7">All rights reserved</div>
+              </div>
+              <div class="social-links">
+                <img class="social-icons" src="https://c.animaapp.com/m91npn2umpacy3/img/social-icons-1.svg" />
+                <img class="social-icons" src="https://c.animaapp.com/m91npn2umpacy3/img/social-icons.svg" />
+                <img class="social-icons" src="https://c.animaapp.com/m91npn2umpacy3/img/social-icons-2.svg" />
+                <img class="social-icons" src="https://c.animaapp.com/m91npn2umpacy3/img/social-icons-3.svg" />
+              </div>
+            </div>
+            <div class="links">
+              <div class="col">
+                <div class="text-wrapper-8">Company</div>
+                <div class="list-items">
+                  <div class="text-wrapper-9">About us</div>
+                  <div class="text-wrapper-10">Blog</div>
+                  <div class="text-wrapper-10">Contact us</div>
+                  <div class="text-wrapper-10">Pricing</div>
+                  <div class="text-wrapper-10">Testimonials</div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="text-wrapper-8">Support</div>
+                <div class="list-items">
+                  <div class="text-wrapper-9">Help center</div>
+                  <div class="text-wrapper-10">Terms of service</div>
+                  <div class="text-wrapper-10">Legal</div>
+                  <div class="text-wrapper-10">Privacy policy</div>
+                  <div class="text-wrapper-10">Status</div>
+                </div>
+              </div>
+
+              
+              <div class="feedback-section">
+                <form id="feedback-form">
+                  <div class="col-2">
+                    <div class="text-wrapper-8">Send Your Feedback</div>
+                    <div class="feedback-input-field">
+                      <textarea class="feedback-textarea" name="feedback" placeholder="Your feedback..." required></textarea>
+                    </div>
+                    <button type="submit" class="button" id="feedback-btn">
+                      <span id="feedback-btn-text">Send Feedback</span>
+                      <span id="feedback-loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i> Sending...
+                      </span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="overlap-2">
+          <div class="rectangle-3"></div>
+          <div class="text-wrapper-12">Own your health story</div>
+          <p class="create-a">
+            Create a personalized profile and access <br />your medical <br />history...<br />any time
+          </p>
+          <img class="First-image" src="../Img/Untitled-1.png" />
+        </div>
+        <img class="subtract" />
+        <div class="overlap-3">
+          <div class="rectangle"></div>
+          <img class="hourglasslogowhite" src="https://c.animaapp.com/m91npn2umpacy3/img/hourglasslogowhite-1.png" />
+          <div class="text-wrapper-13">Save your time</div>
+          <p class="text-wrapper-14">Find labs near you that offer the tests you need.</p>
+        </div>
+        <div class="overlap-4">
+          <div class="rectangle-2"></div>
+          <img class="group" src="https://c.animaapp.com/m91npn2umpacy3/img/group-2.png" />
+          <div class="text-wrapper-15">E-Consults, Simplified</div>
+          <p class="text-wrapper-16">Easily consult doctors online anytime, anywhere.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="back-to-top" id="backToTop">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 4L4 12H9V20H15V12H20L12 4Z" fill="black"/>
+      </svg>
+    </div>
+    
+    <div class="chatbot-floating-btn" id="chatbotBtn">
+      <div class="chatbot-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 12H8.01M12 12H12.01M16 12H16.01M21 12C21 16.9706 16.9706 21 12 21C10.2289 21 8.56648 20.5084 7.13876 19.645L3 21L4.355 16.8612C3.49159 15.4335 3 13.7711 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="pulse-animation"></span>
+    </div>
+
+    <div class="chatbot-window" id="chatbotWindow">
+      <div class="chatbot-header">
+        <h3>TestMate Assistant</h3>
+        <div class="chatbot-actions">
+          <button class="chatbot-action-btn" id="fullscreenBtn" title="Toggle Fullscreen">
+            <i class="fas fa-expand"></i>
+          </button>
+          <button class="chatbot-action-btn" id="closeChatbot" title="Close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <iframe src="test_mate_chat_support.html" id="chatbotIframe"></iframe>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+
+    <script src="../assets/js/LandScript.js"></script>
+    <script>
+      function showNotification(message, type = 'success') {
+        const notification = document.getElementById('notification');
+        notification.innerHTML = `
+          <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+          <span>${message}</span>
+        `;
+        notification.className = `notification ${type === 'success' ? '' : 'error'} show`;
+        
+        setTimeout(() => {
+          notification.classList.remove('show');
+        }, 3500);
+      }
+      
+      const chatbotBtn = document.getElementById('chatbotBtn');
+      const chatbotWindow = document.getElementById('chatbotWindow');
+      const closeChatbot = document.getElementById('closeChatbot');
+      const fullscreenBtn = document.getElementById('fullscreenBtn');
+      const chatbotIframe = document.getElementById('chatbotIframe');
+      
+      let isFullscreen = false;
+      
+      chatbotBtn.addEventListener('click', () => {
+        chatbotWindow.classList.toggle('active');
+        if (!chatbotWindow.classList.contains('active')) {
+          isFullscreen = false;
+          chatbotWindow.classList.remove('fullscreen');
+          fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+        }
+      });
+      
+      closeChatbot.addEventListener('click', () => {
+        chatbotWindow.classList.remove('active');
+        isFullscreen = false;
+        chatbotWindow.classList.remove('fullscreen');
+        fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+      });
+      
+      fullscreenBtn.addEventListener('click', () => {
+        isFullscreen = !isFullscreen;
+        if (isFullscreen) {
+          chatbotWindow.classList.add('fullscreen');
+          fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+        } else {
+          chatbotWindow.classList.remove('fullscreen');
+          fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+        }
+        
+        chatbotIframe.contentWindow.postMessage({
+          type: 'FULLSCREEN_CHANGE',
+          isFullscreen: isFullscreen
+        }, '*');
+      });
+      
+      const feedbackForm = document.getElementById("feedback-form");
+      const feedbackBtn = document.getElementById("feedback-btn");
+      const feedbackBtnText = document.getElementById("feedback-btn-text");
+      const feedbackLoading = document.getElementById("feedback-loading");
+      
+      feedbackForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        feedbackBtn.disabled = true;
+        feedbackBtnText.style.display = "none";
+        feedbackLoading.style.display = "inline";
+        
+        emailjs.sendForm("service_su45159", "template_je6yy3u", feedbackForm)
+          .then(function() {
+            showNotification("Feedback sent successfully!");
+            feedbackForm.reset();
+          }, function(error) {
+            showNotification("Failed to send feedback. Please try again.", 'error');
+            console.error("EmailJS error:", error);
+          })
+          .finally(() => {
+            feedbackBtn.disabled = false;
+            feedbackBtnText.style.display = "inline";
+            feedbackLoading.style.display = "none";
+          });
+      });
+      
+      const emailForm = document.getElementById("email-form");
+      const emailBtn = document.getElementById("email-btn");
+      const emailBtnText = document.getElementById("email-btn-text");
+      const emailLoading = document.getElementById("email-loading");
+      const emailSuccess = document.getElementById("email-success");
+      
+      emailForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        emailBtn.disabled = true;
+        emailBtnText.style.display = "none";
+        emailLoading.style.display = "inline";
+        emailSuccess.style.display = "none";
+        
+        emailjs.sendForm("service_su45159", "template_je6yy3u", emailForm)
+          .then(function() {
+            emailLoading.style.display = "none";
+            emailSuccess.style.display = "block";
+            emailForm.reset();
+            
+            setTimeout(function() {
+              emailSuccess.style.display = "none";
+              emailBtn.disabled = false;
+              emailBtnText.style.display = "inline";
+            }, 3000);
+          }, function(error) {
+            showNotification("Failed to subscribe. Please try again.", 'error');
+            emailBtn.disabled = false;
+            emailBtnText.style.display = "inline";
+            emailLoading.style.display = "none";
+          });
+      
+      });
+      
+      const backToTopBtn = document.getElementById('backToTop');
+      
+      window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+          backToTopBtn.classList.add('visible');
+        } else {
+          backToTopBtn.classList.remove('visible');
+        }
+      });
+      
+      backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+      
+      window.addEventListener('message', function(e) {
+        if (e.data.type === 'CHAT_HEIGHT') {
+          document.getElementById('chatbotIframe').style.height = e.data.height + 'px';
+        }
+      });
+      
+      window.addEventListener('load', function() {
+        document.body.style.opacity = '1';
+      });
+      
+      document.body.style.opacity = '0';
+      document.body.style.transition = 'opacity 0.5s ease';
+
+      
+    </script>
+      </body>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const menuIcon = document.getElementById('menuIcon');
+          const dropdownMenu = document.getElementById('dropdownMenu');
+          
+          menuIcon.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (dropdownMenu.style.display === 'none' || dropdownMenu.style.display === '') {
+              dropdownMenu.style.display = 'block';
+            } else {
+              dropdownMenu.style.display = 'none';
+            }
+          });
+          
+          // Close dropdown when clicking outside
+          document.addEventListener('click', function() {
+            dropdownMenu.style.display = 'none';
+          });
+        });
+      </script>
+    </html>

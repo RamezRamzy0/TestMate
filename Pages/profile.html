@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Profile</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    :root {
+      --primary-color: #ffcc00;
+      --secondary-color: #ffcc00;
+      --accent-color: #ff7e5f;
+      --button-color: #ffcc00;
+      --button-hover: #e6b800;
+      --light-bg: #f5f9fc;
+      --dark-text: #333;
+      --medium-text: #555;
+      --light-text: #777;
+      --white: #fff;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --border-radius: 12px;
+      --allergy-bg: #ffcc001a;
+      --transition-speed: 0.3s;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      background-color: var(--light-bg);
+    }
+
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    
+
+    .main-content {
+      position: relative;
+
+      margin-top: 60px; 
+      padding: 20px;
+      flex: 1;
+    }
+
+
+    .header1 {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: var(--white);
+      padding: 20px;
+      border-radius: 0 0 12px 12px;
+      box-shadow: var(--shadow);
+      animation: fadeIn 0.6s ease-out;
+      border-radius: 12px;
+
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 15px;
+    }
+
+    .notification-icon {
+      background: rgba(255, 255, 255, 0.15);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: pointer;
+      transition: background-color var(--transition-speed);
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background-color: var(--accent-color);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: bold;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .patient-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+.patient-avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: var(--white);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: var(--primary-color);
+    }
+
+.avatar {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      background-image: url(https://c.animaapp.com/m91npn2umpacy3/img/avatar-base.svg);
+      background-size: 100% 100%;
+    }
+
+    .patient-details {
+      flex: 1;
+    }
+
+    .patient-name {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .patient-meta {
+      display: flex;
+      gap: 15px;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .patient-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .content {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card {
+      background-color: var(--white);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      animation: slideIn 0.5s ease-out forwards;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--dark-text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title-icon {
+      background-color: rgba(44, 82, 130, 0.1);
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-color);
+    }
+
+    .card-action {
+      color: var(--primary-color);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-label {
+      font-size: 12px;
+      color: var(--light-text);
+      margin-bottom: 5px;
+    }
+
+    .info-value {
+      font-size: 15px;
+      color: var(--dark-text);
+      font-weight: 500;
+    }
+
+    .allergy-item {
+      display: flex;
+      align-items: center;
+      background-color: var(--allergy-bg);
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      border-left: 3px solid var(--primary-color);
+      justify-content: space-between;
+    }
+
+    .allergy-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .allergy-icon {
+      margin-right: 10px;
+      color: var(--primary-color);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .action-button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background-color: var(--button-color);
+      color: var(--dark-text);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.4);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      text-align: center;
+      max-width: 300px;
+      width: 90%;
+    }
+
+    .modal input,
+    .modal select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .modal button {
+      margin-top: 1rem;
+      background: var(--primary-color);
+      color: var(--dark-text);
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .delete-icon{
+      cursor: pointer;
+    }
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+      
+    }
+    .header {
+            display: flex;
+            width: 100%;
+            height: 58px;
+            align-items: center;
+            justify-content: center;
+            gap: 43.85px;
+            padding: 11.14px 5%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: var(--neutralwhite);
+            box-shadow: var(--shadow-4px);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            position: relative;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            width: 200px;
+        }
+        .whatsapp-image {
+            right: 61px;
+            top: -10px;
+            position: relative;
+            width: 160px;
+            height: auto;
+            object-fit: contain;
+            margin-right: -100px;
+        }
+
+        .text-wrapper-3 {
+            position: relative;
+            width: auto;
+            font-family: "Manrope", Helvetica;
+            font-weight: 700;
+            color: #000000;
+            font-size: 24px;
+            letter-spacing: 0;
+            line-height: normal;
+            white-space: nowrap;
+        }
+  
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-link {
+            font-family: "Manrope", Helvetica;
+            font-weight: 600;
+            color: #000000;
+            font-size: 16px;
+            letter-spacing: 0;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .nav-link:hover {
+            color: #fdd10e;
+        }
+
+        .right-menu {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 22.27px;
+            position: relative;
+            width: 200px;
+        }
+  
+        .profile-dropdown {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 8px 8px 16px;
+            position: relative;
+            flex: 0 0 auto;
+            background-color: var(--white);
+            border-radius: 100px;
+            border: 1px solid;
+            border-color: #e5e7eb;
+        }
+
+        .img {
+            position: relative;
+            width: 24px;
+            height: 24px;
+        }
+        .avatar {
+            position: relative;
+            width: 32px;
+            height: 32px;
+            background-image: url(https://c.animaapp.com/m91npn2umpacy3/img/avatar-base.svg);
+            background-size: 100% 100%;
+        }
+  
+        .login-button {
+            background-color: rgba(253, 209, 14, 1);
+            color: black;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="navbar">
+        <div class="logo-container">
+          <img class="whatsapp-image" src="https://c.animaapp.com/m91npn2umpacy3/img/whatsapp-image-2025-02-09-at-20-19-49-958c0d63-removebg-preview-.png" />
+          <div class="text-wrapper-3">Test Mate</div>
+        </div>
+        <div class="nav-links">
+          <a href="#" class="nav-link active">Home</a>
+          <a href="./searchForLap.html" class="nav-link ">Search</a>
+          <a href="./SettingsPage.html" class="nav-link">Settings</a>
+        </div>
+        
+       <div class="right-menu">
+
+<a href="profile.html" class="profile-dropdown">
+<img class="img" src="https://c.animaapp.com/m91npn2umpacy3/img/menu.svg" />
+<div class="avatar"></div>
+</a>
+<a href="./SignPage.html" class="login-button">Login</a>
+</div>
+      </div>
+    </header>
+
+    <div class="main-content">
+      <div class="header1">
+        <div class="header-top">
+          <div class="notification-icon">
+            🔔
+            <div class="notification-badge">2</div>
+          </div>
+        </div>
+        <div class="patient-info">
+          <div class="patient-avatar avatar"></div>
+          <div class="patient-details">
+            <div class="patient-name">Jana Mostafa</div>
+            <div class="patient-meta">
+              <div class="patient-meta-item">📞 +021112269014</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Personal Info Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <div class="card-title-icon">📋</div>
+              Personal Information
+            </div>
+          </div>
+          <div class="info-grid">
+            <div class="info-item"><div class="info-label">Full Name</div><div class="info-value">Jana Mostafa</div></div>
+            <div class="info-item"><div class="info-label">Gender</div><div class="info-value">Female</div></div>
+            <div class="info-item"><div class="info-label">Date of Birth</div><div class="info-value">01/01/1980</div></div>
+            <div class="info-item"><div class="info-label">Age</div><div class="info-value">44</div></div>
+            <div class="info-item"><div class="info-label">Email</div><div class="info-value">Jana651@gmail.com</div></div>
+            <div class="info-item"><div class="info-label">Location</div><div class="info-value">Giza, 6 October</div></div>
+          </div>
+        </div>
+
+        <div class="card" id="allergies-card">
+          <div class="card-header">
+            <div class="card-title">
+              <div class="card-title-icon">⚠️</div>
+              Allergies
+            </div>
+            <div class="card-action" id="add-allergy-btn">Add</div>
+          </div>
+          <div class="allergy-list" id="allergy-list">
+            <div class="allergy-item">
+              <div class="allergy-left">
+                <div class="allergy-icon">💊</div>
+                <div class="allergy-info">
+                  <div class="allergy-name">Penicillin</div>
+                  <div class="allergy-severity">Severity: High</div>
+                </div>
+              </div>
+              <span class="delete-icon">✕</span>
+            </div>
+            <div class="allergy-item">
+              <div class="allergy-left">
+                <div class="allergy-icon">🥜</div>
+                <div class="allergy-info">
+                  <div class="allergy-name">Nuts</div>
+                  <div class="allergy-severity">Severity: Medium</div>
+                </div>
+              </div>
+              <span class="delete-icon">✕</span>
+            </div>
+            <div class="allergy-item">
+              <div class="allergy-left">
+                <div class="allergy-icon">🦐</div>
+                <div class="allergy-info">
+                  <div class="allergy-name">Shellfish</div>
+                  <div class="allergy-severity">Severity: Low</div>
+                </div>
+              </div>
+              <span class="delete-icon">✕</span>
+            </div>
+          </div>
+        </div>
+        <div class="card" id="actions-card">
+          <div class="card-header">
+            <div class="card-title">
+              <div class="card-title-icon">🗂️</div>
+              Available Actions
+            </div>
+          </div>
+          <div class="action-buttons">
+      <button class="action-button" id="upload-files-btn">
+        <span>📤</span>
+        <span>Upload Files</span>
+      </button>
+
+            <button id="view-all-btn" class="action-button">
+              <span>👁️</span>
+              <span>View All</span>
+            </button>
+
+            <button class="action-button" id="treatment-plan-btn">
+                <span>📝</span>
+                <span>Treatment Plan</span>
+              </button>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="allergy-modal">
+    <div class="modal-content">
+      <h3>Add Allergy</h3>
+      <input type="text" id="allergy-name" placeholder="Allergy Name"/>
+      <select id="allergy-severity">
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+      <button id="confirm-add">Add</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.card');
+      cards.forEach((card, index) => {
+        setTimeout(() => {
+          card.style.animation = `slideIn 0.5s ease-out forwards`;
+        }, 200 + (index * 100));
+      });
+      
+      const actionButtons = document.querySelectorAll('.action-button');
+      actionButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          button.style.animation = 'none';
+          void button.offsetWidth; 
+          button.style.animation = 'subtleHighlight 0.4s ease-out';
+        });
+      });
+      
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(item => {
+        item.addEventListener('click', () => {
+          navItems.forEach(navItem => {
+            navItem.classList.remove('active');
+          });
+          
+          item.classList.add('active');
+          
+          item.style.opacity = '0.8';
+          setTimeout(() => {
+            item.style.opacity = '1';
+          }, 200);
+        });
+      });
+      
+      const notificationIcon = document.querySelector('.notification-icon');
+      notificationIcon.addEventListener('click', () => {
+        notificationIcon.style.opacity = '0.8';
+        setTimeout(() => {
+          notificationIcon.style.opacity = '1';
+          
+          const badge = notificationIcon.querySelector('.notification-badge');
+          if (badge) {
+            if (badge.style.display === 'none') {
+              badge.style.opacity = '0';
+              badge.style.display = 'flex';
+              setTimeout(() => {
+                badge.style.opacity = '1';
+              }, 50);
+            } else {
+              badge.style.opacity = '0';
+              setTimeout(() => {
+                badge.style.display = 'none';
+              }, 200);
+            }
+          }
+        }, 200);
+      });
+      
+      const avatar = document.querySelector('.patient-avatar');
+      avatar.addEventListener('mouseenter', () => {
+        avatar.style.borderColor = 'rgba(255, 255, 255, 0.4)';
+      });
+      
+      avatar.addEventListener('mouseleave', () => {
+        avatar.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+      });
+      
+      const allergyItems = document.querySelectorAll('.allergy-item');
+      allergyItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+          item.style.transform = 'translateX(2px)';
+        });
+        
+        item.addEventListener('mouseleave', () => {
+          item.style.transform = 'translateX(0)';
+        });
+      });
+
+      const addBtn = document.getElementById('add-allergy-btn');
+      const allergyList = document.getElementById('allergy-list');
+      const modal = document.getElementById('allergy-modal');
+      const nameInput = document.getElementById('allergy-name');
+      const severitySelect = document.getElementById('allergy-severity');
+      const confirmBtn = document.getElementById('confirm-add');
+
+      function getIconByName(name) {
+        const nameLower = name.toLowerCase();
+        if (nameLower.includes('peanut') || nameLower.includes('🥜')) return '🥜';
+        if (nameLower.includes('penicillin')) return '💊';
+        if (nameLower.includes('pollen')) return '🌸';
+        if (nameLower.includes('dust')) return '🌫️';
+        if (nameLower.includes('shellfish')) return '🦐';
+        if (nameLower.includes('egg')) return '🥚';
+        if (nameLower.includes('milk')) return '🥛';
+        if (nameLower.includes('gluten')) return '🌾';
+        if (nameLower.includes('soy')) return '🌱';
+        if (nameLower.includes('fish')) return '🐟';
+        return '⚠️'; // Default icon
+      }
+
+      addBtn.addEventListener('click', () => {
+        nameInput.value = "";
+        severitySelect.value = "High";
+        modal.style.display = 'flex';
+      });
+
+      confirmBtn.addEventListener('click', () => {
+        const name = nameInput.value.trim();
+        const severity = severitySelect.value;
+
+        if (!name) return alert('Please enter allergy name.');
+
+        confirmBtn.textContent = "Adding...";
+        confirmBtn.disabled = true;
+
+        setTimeout(() => {
+          const icon = getIconByName(name);
+          const item = document.createElement('div');
+          item.className = 'allergy-item';
+          item.innerHTML = `
+            <div class="allergy-left">
+              <div class="allergy-icon">${icon}</div>
+              <div class="allergy-info">
+                <div class="allergy-name">${name}</div>
+                <div class="allergy-severity">Severity: ${severity}</div>
+              </div>
+            </div>
+            <span class="delete-icon">✕</span>
+          `;
+
+          item.querySelector('.delete-icon').addEventListener('click', (e) => {
+            e.stopPropagation();
+            item.style.transform = 'translateX(-20px)';
+            item.style.opacity = '0';
+            setTimeout(() => {
+              allergyList.removeChild(item);
+            }, 200);
+          });
+
+          item.style.opacity = '0';
+          item.style.transform = 'translateX(20px)';
+          allergyList.appendChild(item);
+          
+          setTimeout(() => {
+            item.style.opacity = '1';
+            item.style.transform = 'translateX(0)';
+          }, 10);
+
+          modal.style.display = 'none';
+          confirmBtn.textContent = "Add";
+          confirmBtn.disabled = false;
+        }, 500);
+      });
+
+      document.querySelectorAll('.delete-icon').forEach(icon => {
+        icon.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const item = e.target.closest('.allergy-item');
+          item.style.transform = 'translateX(-20px)';
+          item.style.opacity = '0';
+          setTimeout(() => {
+            allergyList.removeChild(item);
+          }, 200);
+        });
+      });
+
+      window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+      });
+
+
+      // const viewAllBtn = document.getElementById('view-all-btn');
+      // if (viewAllBtn) {
+      //   viewAllBtn.addEventListener('click', () => {
+      //     window.location.href = './ListForPatient.html';
+      //   });
+      // }
+      
+      // Add event listener to open UploadFile.html in popup on button click
+      const uploadFilesBtn = document.getElementById('upload-files-btn');
+      if (uploadFilesBtn) {
+        uploadFilesBtn.addEventListener('click', () => {
+          window.location.href = './UploadFile.html';
+        });
+      }
+
+      // Close modal event
+      const uploadModalClose = document.getElementById('upload-modal-close');
+      if (uploadModalClose) {
+        uploadModalClose.addEventListener('click', () => {
+          const modal = document.getElementById('upload-file-modal');
+          if (modal) {
+            modal.style.display = 'none';
+          }
+        });
+      }
+
+      // Upload file modal script (adapted from UploadFile.html)
+      document.addEventListener('DOMContentLoaded', function() {
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const browseBtn = document.getElementById('browseBtn');
+        const fileList = document.getElementById('fileList');
+        
+        // Sample files to display initially
+        setTimeout(() => {
+          addFile('Blood analysis', 'pdf', '60 KB of 120 KB', 'uploading');
+          addFile('Rumors pictures on the head', 'image', '94 KB of 94 KB', 'completed');
+        }, 500);
+        
+        // Browse button click
+        browseBtn.addEventListener('click', function() {
+          fileInput.click();
+        });
+        
+        // File input change
+        fileInput.addEventListener('change', function() {
+          handleFiles(this.files);
+        });
+        
+        // Drag and drop events
+        dropzone.addEventListener('dragover', function(e) {
+          e.preventDefault();
+          dropzone.classList.add('dragover');
+        });
+        
+        dropzone.addEventListener('dragleave', function() {
+          dropzone.classList.remove('dragover');
+        });
+        
+        dropzone.addEventListener('drop', function(e) {
+          e.preventDefault();
+          dropzone.classList.remove('dragover');
+          handleFiles(e.dataTransfer.files);
+        });
+        
+        // Handle file uploads
+        function handleFiles(files) {
+          for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const fileSize = formatFileSize(file.size);
+            const fileType = getFileType(file.type);
+            
+            addFile(file.name, fileType, `${fileSize} of ${fileSize}`, 'uploading');
+            
+            // Simulate upload completion after a delay
+            setTimeout(() => {
+              const fileItems = document.querySelectorAll('.file-item');
+              const lastFile = fileItems[fileItems.length - 1];
+              
+              if (lastFile) {
+                const progressFill = lastFile.querySelector('.progress-fill');
+                const statusIcon = lastFile.querySelector('.status-icon');
+                const statusText = lastFile.querySelector('.status-text');
+                
+                progressFill.style.width = '100%';
+                progressFill.classList.add('completed');
+                statusIcon.classList.remove('status-uploading');
+                statusIcon.classList.add('status-completed');
+                statusText.textContent = 'Completed';
+              }
+            }, 3000);
+          }
+        }
+        
+        // Add file to the list
+        function addFile(name, type, size, status) {
+          const fileItem = document.createElement('div');
+          fileItem.className = `file-item ${status}`;
+          
+          const iconClass = type === 'pdf' ? 'pdf-icon' : 'image-icon';
+          const statusIconClass = status === 'uploading' ? 'status-uploading' : 'status-completed';
+          const statusText = status === 'uploading' ? 'Uploading...' : 'Completed';
+          const progressWidth = status === 'uploading' ? '50%' : '100%';
+          const progressClass = status === 'completed' ? 'progress-fill completed' : 'progress-fill';
+          const actionIcon = status === 'uploading' ? '✕' : '✕';
+          
+          fileItem.innerHTML = `
+            <div class="file-icon ${iconClass}">${type === 'pdf' ? 'PDF' : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>'}</div>
+            <div class="file-details">
+              <div class="file-name">${name}</div>
+              <div class="file-size">
+                ${size}
+                <span class="status-icon ${statusIconClass}"></span>
+                <span class="status-text">${statusText}</span>
+              </div>
+              <div class="progress-bar">
+                <div class="${progressClass}" style="width: ${progressWidth}"></div>
+              </div>
+            </div>
+            <div class="file-actions">
+              <button class="action-btn">${actionIcon}</button>
+            </div>
+          `;
+          
+          fileList.appendChild(fileItem);
+          
+          // Add delete functionality
+          const deleteBtn = fileItem.querySelector('.action-btn');
+          deleteBtn.addEventListener('click', function() {
+            fileItem.style.opacity = '0';
+            setTimeout(() => {
+              fileList.removeChild(fileItem);
+            }, 300);
+          });
+        }
+        
+        // Helper function to format file size
+        function formatFileSize(bytes) {
+          if (bytes < 1024) return bytes + ' B';
+          else if (bytes < 1048576) return Math.round(bytes / 1024) + ' KB';
+          else return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+        
+        // Helper function to get file type
+        function getFileType(mimeType) {
+          if (mimeType.startsWith('image/')) return 'image';
+          else if (mimeType === 'application/pdf') return 'pdf';
+          else if (mimeType.startsWith('video/')) return 'video';
+          else return 'file';
+        }
+      });
+
+      // Add click event listener for View All button
+      const viewAllBtn = document.getElementById('view-all-btn');
+      if (viewAllBtn) {
+        viewAllBtn.addEventListener('click', () => {
+          window.location.href = './ListForPatient.html';
+        });
+      }
+
+      // Add click event listener for Treatment Plan button
+      const treatmentPlanBtn = document.getElementById('treatment-plan-btn');
+      if (treatmentPlanBtn) {
+        treatmentPlanBtn.addEventListener('click', () => {
+          window.location.href = './TreatmentPlan.html';
+        });
+      }
+    </script>
+
+</body>
+</html>

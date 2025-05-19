@@ -1,0 +1,2535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Mate - Advanced Lab Appointment System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    
+    <style>
+        :root {
+            --brandsecondary: rgba(38, 50, 56, 1);
+    --brandprimary: rgba(76, 175, 79, 1);
+    --neutraldgrey: rgba(77, 77, 77, 1);
+    --neutralgrey: rgba(113, 113, 113, 1);
+    --neutralwhite: rgba(255, 255, 255, 1);
+    --black: rgba(0, 0, 0, 1);
+    --gray-500: rgba(107, 114, 128, 1);
+    --gray-200: rgba(229, 231, 235, 1);
+    --white: rgba(255, 255, 255, 1);
+    --gray-900: rgba(17, 24, 39, 1);
+    --gray-100: rgba(243, 244, 246, 1);
+    --gray-300: rgba(209, 213, 219, 1);
+    --neutralsilver: rgba(245, 247, 250, 1);
+    --default-white: rgba(255, 255, 255, 1);
+    --text-gray-300: rgba(217, 219, 225, 1);
+    --neutralblack: rgba(38, 50, 56, 1);
+            --primary-color: #FFD700; /* Yellow */
+            --primary-light: #FFF8E1; /* Light Yellow */
+            --secondary-color: #FFB300; /* Darker Yellow */
+            --accent-color: #FF6F00; /* Orange */
+            --dark-color: #212121; /* Very Dark Gray */
+            --light-color: #FFFFFF; /* White */
+            --gray-color: #F5F5F5; /* Light Gray */
+            --text-color: #333333; /* Dark Gray for Text */
+            --danger-color: #d9534f;
+            --success-color: #28a745;
+            --box-shadow: 0 5px 15px rgba(0, 0, 0, 0);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: var(--white);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            color: #000000;
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            color: #000000;
+            margin-left: 25px;
+            position: relative;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #000000;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 8px 0;
+            display: inline-block;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links a::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            color: var(--light-color);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-actions a {
+            margin-left: 15px;
+            color: var(--light-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .user-actions a:hover {
+            color: var(--primary-color);
+        }
+
+        .user-actions .btn-sign-in {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .user-actions .btn-sign-in:hover {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.95), rgba(255, 179, 0, 0.9));
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://placehold.co/2000x1000');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+            letter-spacing: 1px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: var(--dark-color);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            font-weight: 500;
+            animation: fadeInUp 1s ease-out 0.3s;
+            animation-fill-mode: both;
+        }
+
+        .hero-cta {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            animation: fadeInUp 1s ease-out 0.6s;
+            animation-fill-mode: both;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--black);
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--dark-color);
+            border: 2px solid var(--dark-color);
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 80px 0;
+            background-color: var(--light-color);
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background-color: var(--primary-color);
+            margin: 10px auto 0;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 50px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: var(--light-color);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: var(--primary-color);
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover .feature-icon {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            transform: rotateY(360deg);
+            transition: transform 0.8s;
+        }
+
+        .feature-title {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+
+        .feature-description {
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        /* Reservation Section */
+        .reservation-section {
+            padding: 80px 0;
+            background-color: var(--gray-color);
+            position: relative;
+        }
+
+        /* Make the reservation container take full width */
+        .reservation-container {
+            display: grid;
+            grid-template-columns: 1fr; /* Changed to single column */
+            gap: 30px; /* Reduced gap */
+            position: relative;
+        }
+
+        .booking-steps {
+            margin-bottom: 40px;
+        }
+
+        .steps-list {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .steps-list::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #ddd;
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            width: 20%;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ddd;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+
+        .step.active .step-number {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+        }
+
+        .step.completed .step-number {
+            background-color: var(--success-color);
+            color: var(--light-color);
+        }
+
+        .step-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .step.active .step-label {
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+
+        /* Update the reservation-form to fill more space */
+        .reservation-form {
+            background-color: var(--light-color);
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            min-height: 800px; /* Increased minimum height */
+        }
+
+        .reservation-info {
+            background-color: var(--light-color);
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: var(--box-shadow);
+            height: 100%;
+        }
+
+        .form-title {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-title i {
+            color: var(--primary-color);
+        }
+
+        /* Tabs */
+        .tabs {
+            width: 100%;
+            height: 100%; /* Make tabs fill the container */
+        }
+
+        .tabs-header {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab-item {
+            padding: 12px;
+            text-align: center;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .tab-item:hover {
+            background-color: #eee;
+        }
+
+        .tab-item.active {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+
+        /* Make the tabs content fill more space */
+        .tab-content {
+            display: none;
+            height: calc(100% - 60px); /* Make content fill more of the remaining space */
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Search and Filter */
+        .search-bar {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-bar i {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .filter-option {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .filter-option:hover, .filter-option.active {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            border-color: var(--primary-color);
+        }
+
+        /* Make the lab list fill more vertical space */
+        .lab-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+            gap: 25px; /* Increased gap between cards */
+            max-height: 700px; /* Increased height significantly */
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* Make lab cards larger */
+        .lab-card {
+            background-color: var(--light-color);
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            min-height: 220px; /* Set minimum height */
+        }
+
+        .lab-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .lab-card.selected {
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .lab-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            padding: 5px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 25px;
+            z-index: 2;
+        }
+
+        .lab-image {
+            width: 320px; /* Fixed width */
+            height: auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lab-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .lab-card:hover .lab-image img {
+            transform: scale(1.05);
+        }
+
+        .lab-details {
+            padding: 20px;
+            flex: 1; /* Take remaining space */
+        }
+
+        .lab-name {
+            font-size: 20px; /* Increased size */
+            font-weight: 600;
+            margin-bottom: 10px; /* Increased margin */
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .lab-verified {
+            color: var(--primary-color);
+            font-size: 18px; /* Increased size */
+            display: flex;
+            align-items: center;
+        }
+
+        .lab-address {
+            font-size: 16px; /* Increased size */
+            color: #666;
+            margin-bottom: 15px; /* Increased margin */
+            display: flex;
+            align-items: start;
+            gap: 5px;
+        }
+
+        .lab-address i {
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .lab-rating {
+            color: var(--primary-color);
+            font-size: 16px; /* Increased size */
+            margin-bottom: 15px; /* Increased margin */
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .lab-rating span {
+            color:rgba(0, 0, 0, 0);
+        }
+
+        .lab-services {
+            margin-top: 15px; /* Increased margin */
+            font-size: 16px; /* Increased size */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px; /* Increased gap */
+        }
+
+        .service-tag {
+            display: inline-block;
+            background-color: var(--gray-color);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+            padding: 6px 12px; /* Increased padding */
+            border-radius: 20px;
+            font-size: 14px; /* Increased size */
+            transition: var(--transition);
+        }
+
+        .lab-card:hover .service-tag {
+            background-color: var(--primary-light);
+            border-color: var(--primary-color);
+        }
+
+        .lab-actions {
+            margin-top: 20px; /* Increased margin */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .lab-price {
+            font-weight: 600;
+            font-size: 18px; /* Increased size */
+            color: var(--dark-color);
+        }
+
+        .lab-action-btn {
+            padding: 8px 16px; /* Increased padding */
+            border-radius: 5px;
+            font-size: 15px; /* Increased size */
+            font-weight: 500;
+            cursor: pointer;
+            background-color: var(--primary-light);
+            color: var(--dark-color);
+            border: none;
+            transition: var(--transition);
+        }
+
+        .lab-action-btn:hover {
+            background-color: var(--primary-color);
+        }
+
+        /* Test Selection */
+        .test-categories {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .test-category {
+            min-width: 140px; /* Increased width */
+            padding: 15px 25px; /* Increased padding */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px; /* Increased gap */
+            font-size: 16px; /* Increased font size */
+        }
+
+        .test-category:hover, .test-category.active {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            border-color: var(--primary-color);
+        }
+
+        /* Make the test list taller */
+        .test-list {
+            max-height: 650px; /* Significantly increased height */
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px; /* Increased padding */
+        }
+
+        /* Make test items taller */
+        .test-item {
+            padding: 20px 25px; /* Increased padding */
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 5px; /* Added margin between items */
+        }
+
+        .test-item:last-child {
+            border-bottom: none;
+        }
+
+        .test-item:hover {
+            background-color: var(--primary-light);
+        }
+
+        .test-item.selected {
+            background-color: var(--primary-light);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .test-info {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Increased gap */
+        }
+
+        .test-checkbox {
+            width: 24px; /* Increased size */
+            height: 24px; /* Increased size */
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .test-item.selected .test-checkbox {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .checkbox-circle {
+            width: 12px; /* Increased size */
+            height: 12px; /* Increased size */
+            border-radius: 50%;
+            background-color: var(--dark-color);
+            display: none;
+        }
+
+        .test-item.selected .checkbox-circle {
+            display: block;
+        }
+
+        .test-name {
+            font-weight: 500;
+            font-size: 18px; /* Increased size */
+        }
+
+        .test-description {
+            font-size: 14px; /* Increased size */
+            color: #666;
+        }
+
+        .test-price {
+            font-weight: 600;
+            color: var(--dark-color);
+            font-size: 18px; /* Increased size */
+        }
+
+        .selected-tests-summary {
+            margin-top: 25px; /* Increased margin */
+            padding: 20px; /* Increased padding */
+            background-color: var(--primary-light);
+            border-radius: 8px;
+        }
+
+        .summary-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .selected-count {
+            font-weight: 600;
+            font-size: 18px; /* Increased size */
+        }
+
+        .selected-total {
+            font-size: 16px; /* Increased size */
+            color: #666;
+        }
+
+        .btn-clear {
+            padding: 8px 15px; /* Increased padding */
+            border: 1px solid #ddd;
+            background-color: transparent;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 15px; /* Increased size */
+        }
+
+        .btn-clear:hover {
+            background-color: #eee;
+        }
+
+        /* Make the schedule grid fill more space */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            height: 100%; /* Make it fill the container */
+            min-height: 600px; /* Set minimum height */
+        }
+
+        /* Calendar and Time Selection */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px; /* Increased margin */
+        }
+
+        .calendar-title {
+            font-size: 20px; /* Increased size */
+            font-weight: 600;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 15px; /* Increased gap */
+        }
+
+        .calendar-nav-btn {
+            width: 36px; /* Increased size */
+            height: 36px; /* Increased size */
+            border-radius: 50%;
+            background-color: var(--gray-color);
+            border: none;
+            font-size: 16px; /* Increased size */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .calendar-nav-btn:hover {
+            background-color: var(--primary-color);
+        }
+
+        .calendar {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .calendar th {
+            padding: 15px; /* Increased padding */
+            font-size: 16px; /* Increased size */
+            font-weight: 500;
+            color: #666;
+        }
+
+        .calendar td {
+            padding: 5px; /* Added padding */
+            text-align: center;
+        }
+
+        /* Make calendar larger */
+        .calendar-day {
+            width: 60px; /* Increased size */
+            height: 60px; /* Increased size */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 5px auto;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 18px; /* Increased size */
+        }
+
+        .calendar-day:hover {
+            background-color: var(--primary-light);
+        }
+
+        .calendar-day.active {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+
+        .calendar-day.disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Make time slots larger */
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px; /* Increased gap */
+            margin-top: 20px; /* Added top margin */
+        }
+
+        .time-slot {
+            padding: 20px; /* Increased padding */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 18px; /* Increased size */
+        }
+
+        .time-slot:hover {
+            background-color: var(--primary-light);
+            border-color: var(--primary-color);
+        }
+
+        .time-slot.active {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            border-color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .time-slot.disabled {
+            color: #ccc;
+            background-color: #f9f9f9;
+            cursor: not-allowed;
+        }
+
+        /* Patient Information Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        /* Make the patient form elements larger */
+        .form-control {
+            width: 100%;
+            padding: 15px 20px; /* Increased padding */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 18px; /* Increased font size */
+            transition: var(--transition);
+            margin-bottom: 10px; /* Added margin */
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .form-check-label {
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Map */
+        .map-container {
+            height: 400px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        /* Appointment Summary */
+        .appointment-summary {
+            background-color: var(--light-color);
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .summary-title {
+            font-size: 20px;
+            padding: 15px 20px;
+            background-color: var(--primary-light);
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .summary-content {
+            padding: 20px;
+        }
+
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .summary-qr {
+            width: 100px;
+            height: 100px;
+            background-color: #f5f5f5;
+            border: 1px dashed #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+        }
+
+        .summary-lab {
+            margin-bottom: 15px;
+        }
+
+        .summary-lab-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .summary-lab-name i {
+            color: var(--primary-color);
+        }
+
+        .summary-lab-address {
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+
+        .summary-lab-contact {
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .summary-datetime {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            background-color: var(--primary-light);
+            padding: 12px 15px;
+            border-radius: 8px;
+        }
+
+        .summary-date, .summary-time {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+
+        .summary-divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 15px 0;
+        }
+
+        .summary-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .summary-section-title i {
+            color: var(--primary-color);
+        }
+
+        .summary-patient {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .patient-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .patient-info-item {
+            font-size: 14px;
+        }
+
+        .patient-info-label {
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .patient-info-value {
+            font-weight: 600;
+        }
+
+        .summary-test-list {
+            margin-bottom: 15px;
+        }
+
+        .summary-test-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .summary-test-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .test-item-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .test-item-name {
+            font-weight: 500;
+        }
+
+        .test-item-description {
+            font-size: 12px;
+            color: #000000;
+        }
+
+        .test-item-price {
+            font-weight: 600;
+        }
+
+        .summary-price-breakdown {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .summary-price-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .summary-price-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .summary-instructions {
+            background-color: var(--primary-light);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .instruction-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .instruction-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .instruction-item i {
+            color: var(--primary-color);
+            margin-top: 3px;
+        }
+
+        .summary-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .summary-action-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+
+        .btn-download {
+            background-color: #f5f5f5;
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+
+        .btn-download:hover {
+            background-color: #eee;
+        }
+
+        .btn-reschedule {
+            background-color: var(--primary-light);
+            color: var(--dark-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .btn-reschedule:hover {
+            background-color: var(--primary-color);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        .btn-block {
+            width: 100%;
+            display: block;
+        }
+
+        .btn-next {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+        }
+
+        .btn-back {
+            background-color: transparent;
+            border: 1px solid #ddd;
+            color: var(--text-color);
+        }
+
+        .btn-back:hover {
+            background-color: #eee;
+            transform: translateY(-3px);
+        }
+
+        .form-buttons {
+            display: flex;
+            justify-content: space-between;
+
+             margin-top: -20px; 
+        }
+
+        /* Make payment methods larger */
+        .payment-method {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 25px; /* Increased padding */
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .payment-method:hover {
+            border-color: var(--primary-color);
+            background-color: var(--primary-light);
+        }
+
+        .payment-method.active {
+            border-color: var(--primary-color);
+            background-color: var(--primary-light);
+        }
+
+        /* Make payment methods larger */
+        .payment-method-icon {
+            font-size: 32px; /* Increased size */
+            margin-bottom: 15px; /* Increased margin */
+            color: var(--dark-color);
+        }
+
+        .payment-method-name {
+            font-size: 16px; /* Increased size */
+            font-weight: 500;
+        }
+
+        /* Invoice Page */
+        .invoice-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .invoice-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: var(--light-color);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .invoice-header {
+            background-color: var(--primary-color);
+            padding: 20px;
+            color: var(--dark-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .invoice-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .invoice-logo-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--dark-color);
+            color: var(--primary-color);
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .invoice-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .invoice-body {
+            padding: 30px;
+        }
+
+        .invoice-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .invoice-info-section {
+            max-width: 250px;
+        }
+
+        .invoice-info-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+
+        .invoice-info-item {
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .invoice-info-item strong {
+            color: var(--dark-color);
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .invoice-table th {
+            background-color: #f5f5f5;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark-color);
+            border-bottom: 1px solid #ddd;
+        }
+
+        .invoice-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            color: #666;
+        }
+
+        .invoice-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .invoice-table .text-right {
+            text-align: right;
+        }
+
+        .invoice-totals {
+            width: 100%;
+            max-width: 350px;
+            margin-left: auto;
+        }
+
+        .invoice-total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .invoice-total-row.final {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark-color);
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            margin-top: 5px;
+        }
+
+        .invoice-notes {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .invoice-footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .invoice-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            padding-bottom: 20px;
+        }
+
+        .invoice-action-btn {
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-print {
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            border: 1px solid #ddd;
+        }
+
+        .btn-print:hover {
+            background-color: #eee;
+        }
+
+        .btn-confirm {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            border: none;
+            
+        }
+
+        .btn-confirm:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-cancel {
+            background-color: transparent;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+
+        .btn-cancel:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Confirmation Modal */
+        .confirmation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .confirmation-container {
+            background-color: var(--light-color);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0);
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .confirmation-icon {
+            font-size: 60px;
+            color: var(--success-color);
+            margin-bottom: 20px;
+        }
+
+        .confirmation-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+
+        .confirmation-message {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .confirmation-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        
+        /* Make the calendar wrapper fill more space */
+        .calendar-wrapper {
+            min-height: 500px; /* Set minimum height */
+        }
+
+        /* Make the time selection fill more space */
+        .time-selection {
+            min-height: 500px; /* Set minimum height */
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            border-radius: 50%; 
+        }
+
+        .footer-logo .logo-img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .invoice-logo .logo-img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+
+        .provider-header {
+      background: linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(77 1 77) 86%);
+      background-size: cover;
+      color: white;
+
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-content h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      color: white;
+    }
+
+    .header-content {
+      padding: 20px;
+      max-width: 60%;
+    }
+
+    .provider-details {
+      list-style-type: disc;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #FFD700;
+      padding-left: 20px;
+      margin: 0;
+    }
+    
+
+    
+    .header-image-container {
+  max-width: 35%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+.header-image-container img {
+    /* mask-image: linear-gradient(to left, black, transparent); */
+    height: 245px;
+
+}
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: flex-start;
+    position: relative;
+    margin-top: 50px;
+    background-color: transparent;
+  }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="navbar">
+                <a href="/" class="logo">
+                    <img src="images/t.png" alt="Test Mate Logo" class="logo-img">
+                    <span>Test Mate</span>
+                </a>
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Search</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Profile</a></li>
+                    </ul>
+                </nav>
+                <div class="user-actions">
+                    <a href="/login">Log in</a>
+                    <a href="/signup" class="btn-sign-in">Sign Up</a>
+                </div>
+                <div class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="provider-header">
+        <div class="header-content">
+            <h2>
+                Al Mokhtabar
+                <span class="rating">9.0 ⭐ (311 reviews)</span>
+            </h2>
+            <ul class="provider-details">
+                <li>Advantages: Accurate results, home visits available,</li>
+                <li>multiple branches nearby,</li>
+                <li>Working Hours: 8 AM - 10 PM (Daily).</li>
+                <li>Contact Number: 19014</li>
+            </ul>
+            <p class="price">250 EGP</p>
+        </div>
+        <div class="header-image-container">
+          <img src="../Img/qlab.png" alt="Header Image" />
+        </div>
+    </div>
+    <div class="hero-cta">
+        <a href="#booking" class="btn-primary">
+            <i class="fas fa-calendar-check"></i> Book Appointment
+        </a>
+        <a href="#features" class="btn-secondary">
+            <i class="fas fa-info-circle"></i> Learn More
+        </a>
+    </div>
+    <!-- <section class="hero">
+        <div class="container">
+            <h1>Advanced Lab Appointment System</h1>
+            <p>Book your lab tests online with ease. Choose from hundreds of certified labs, select your tests, and schedule appointments at your convenience.</p>
+            <div class="hero-cta">
+                <a href="#booking" class="btn-primary">
+                    <i class="fas fa-calendar-check"></i> Book Appointment
+                </a>
+                <a href="#features" class="btn-secondary">
+                    <i class="fas fa-info-circle"></i> Learn More
+                </a>
+            </div>
+        </div>
+    </section> -->
+
+    <section id="features" class="features-section">
+        <div class="container">
+            <h2 class="section-title">Our Features</h2>
+            <p class="section-subtitle">Experience the most advanced lab appointment system with these amazing features</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <h3 class="feature-title">Wide Test Selection</h3>
+                    <p class="feature-description">Choose from hundreds of lab tests and comprehensive health packages</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Nearby Labs</h3>
+                    <p class="feature-description">Find certified labs near your location with real-time availability</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="feature-title">Instant Booking</h3>
+                    <p class="feature-description">Book your appointment instantly and receive immediate confirmation</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="booking" class="reservation-section">
+        <div class="container">
+            <h2 class="section-title">Book Your Appointment</h2>
+            <p class="section-subtitle">Follow these simple steps to book your lab appointment</p>
+            
+            <div class="booking-steps">
+                <div class="steps-list">
+                    <div class="step active" id="step-1">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Select Lab</div>
+                    </div>
+                    <div class="step" id="step-2">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Choose Tests</div>
+                    </div>
+                    <div class="step" id="step-3">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Schedule</div>
+                    </div>
+                    <div class="step" id="step-4">
+                        <div class="step-number">4</div>
+                        <div class="step-label">Patient Info</div>
+                    </div>
+                    <div class="step" id="step-5">
+                        <div class="step-number">5</div>
+                        <div class="step-label">Confirm</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="reservation-container">
+                <div class="reservation-form">
+                    <div class="tabs">
+                        <div class="tabs-header">
+                            <div class="tab-item active" data-tab="location">Location</div>
+                            <div class="tab-item" data-tab="tests">Tests</div>
+                            <div class="tab-item" data-tab="schedule">Schedule</div>
+                            <div class="tab-item" data-tab="patient">Patient Info</div>
+                        </div>
+                        
+                        <div class="tabs-content">
+                            <div class="tab-content active" id="location-tab">
+                                <div class="search-bar">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" placeholder="Search for labs by name or location in Egypt">
+                                </div>
+                                
+                                <div class="filter-options">
+                                    <div class="filter-option active">Nearest</div>
+                                    <div class="filter-option">Highest Rated</div>
+                                    <div class="filter-option">Home Collection</div>
+                                    <div class="filter-option">Open Now</div>
+                                </div>
+                                
+                                <div class="lab-list">
+                                    <div class="lab-card selected" data-lab-id="lab1">
+                                        <div class="lab-badge">Popular</div>
+                                        <div class="lab-image">
+                                            <img src="../Img/qlab.png" alt="Q-lab">
+                                        </div>
+                                        <div class="lab-details">
+                                            <div class="lab-name">
+                                               Q-lab
+                                                <div class="lab-verified">
+                                                    <i class="fas fa-check-circle"></i>
+                                                </div>
+                                            </div>
+                                            <div class="lab-address">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                                123 Tahrir Square, Cairo, Egypt
+                                            </div>
+                                            <div class="lab-rating">
+                                                <i class="fas fa-star"></i> 4.8
+                                                <span>(124 reviews)</span>
+                                            </div>
+                                            <div class="lab-services">
+                                                <span class="service-tag">Blood Tests</span>
+                                                <span class="service-tag">Urine Analysis</span>
+                                                <span class="service-tag">COVID-19</span>
+                                                <span class="service-tag">Hormones</span>
+                                                <span class="service-tag">Allergy Tests</span>
+                                            </div>
+                                            <div class="lab-actions">
+                                                <div class="lab-price">From 800 EGP</div>
+                                                <button class="lab-action-btn">Select</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="lab-card" data-lab-id="lab2">
+                                        <div class="lab-image">
+                                            <img src="../Img/images.jpg" alt="Ahram Scan">
+                                        </div>
+                                        <div class="lab-details">
+                                            <div class="lab-name">
+                                                Ahram Scan
+                                                <div class="lab-verified">
+                                                    <i class="fas fa-check-circle"></i>
+                                                </div>
+                                            </div>
+                                            <div class="lab-address">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                                456 El-Nasr St, Alexandria, Egypt
+                                            </div>
+                                            <div class="lab-rating">
+                                                <i class="fas fa-star"></i> 4.6
+                                                <span>(98 reviews)</span>
+                                            </div>
+                                            <div class="lab-services">
+                                                <span class="service-tag">Full Body Checkup</span>
+                                                <span class="service-tag">Diabetes</span>
+                                                <span class="service-tag">Thyroid</span>
+                                                <span class="service-tag">Radiology</span>
+                                                <span class="service-tag">MRI</span>
+                                            </div>
+                                            <div class="lab-actions">
+                                                <div class="lab-price">From 950 EGP</div>
+                                                <button class="lab-action-btn">Select</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-content" id="tests-tab">
+                                <div class="test-categories">
+                                    <div class="test-category active">
+                                        <i class="fas fa-vial"></i>
+                                        <span>Blood Tests</span>
+                                    </div>
+                                    <div class="test-category">
+                                        <i class="fas fa-heartbeat"></i>
+                                        <span>Cardiac Tests</span>
+                                    </div>
+                                    <div class="test-category">
+                                        <i class="fas fa-dna"></i>
+                                        <span>Genetic Tests</span>
+                                    </div>
+                                    <div class="test-category">
+                                        <i class="fas fa-x-ray"></i>
+                                        <span>Radiology</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="test-list">
+                                    <div class="test-item selected">
+                                        <div class="test-info">
+                                            <div class="test-checkbox">
+                                                <div class="checkbox-circle"></div>
+                                            </div>
+                                            <div>
+                                                <div class="test-name">Complete Blood Count (CBC)</div>
+                                                <div class="test-description">A comprehensive blood test to evaluate overall health</div>
+                                            </div>
+                                        </div>
+                                        <div class="test-price">250 EGP</div>
+                                    </div>
+                                    
+                                    <div class="test-item">
+                                        <div class="test-info">
+                                            <div class="test-checkbox">
+                                                <div class="checkbox-circle"></div>
+                                            </div>
+                                            <div>
+                                                <div class="test-name">Lipid Profile</div>
+                                                <div class="test-description">Measures cholesterol and triglycerides to assess cardiovascular risk</div>
+                                            </div>
+                                        </div>
+                                        <div class="test-price">300 EGP</div>
+                                    </div>
+                                    
+                                    <div class="test-item">
+                                        <div class="test-info">
+                                            <div class="test-checkbox">
+                                                <div class="checkbox-circle"></div>
+                                            </div>
+                                            <div>
+                                                <div class="test-name">Liver Function Test (LFT)</div>
+                                                <div class="test-description">Evaluates liver health by measuring liver enzymes and proteins</div>
+                                            </div>
+                                        </div>
+                                        <div class="test-price">280 EGP</div>
+                                    </div>
+                                    
+                                    <div class="test-item">
+                                        <div class="test-info">
+                                            <div class="test-checkbox">
+                                                <div class="checkbox-circle"></div>
+                                            </div>
+                                            <div>
+                                                <div class="test-name">Kidney Function Test (KFT)</div>
+                                                <div class="test-description">Assesses kidney function by measuring creatinine and urea levels</div>
+                                            </div>
+                                        </div>
+                                        <div class="test-price">220 EGP</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="selected-tests-summary">
+                                    <div class="summary-content">
+                                        <div class="selected-count">1 Test Selected</div>
+                                        <div class="selected-total">Total: 250 EGP</div>
+                                        <button class="btn-clear">Clear All</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-content" id="schedule-tab">
+                                <div class="schedule-grid">
+                                    <div class="calendar-wrapper">
+                                        <div class="calendar-header">
+                                            <div class="calendar-title">October 2024</div>
+                                            <div class="calendar-nav">
+                                                <button class="calendar-nav-btn"><i class="fas fa-chevron-left"></i></button>
+                                                <button class="calendar-nav-btn"><i class="fas fa-chevron-right"></i></button>
+                                            </div>
+                                        </div>
+                                        <table class="calendar">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sun</th>
+                                                    <th>Mon</th>
+                                                    <th>Tue</th>
+                                                    <th>Wed</th>
+                                                    <th>Thu</th>
+                                                    <th>Fri</th>
+                                                    <th>Sat</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td>1</td>
+                                                    <td>2</td>
+                                                    <td>3</td>
+                                                    <td>4</td>
+                                                    <td>5</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>6</td>
+                                                    <td>7</td>
+                                                    <td>8</td>
+                                                    <td>9</td>
+                                                    <td>10</td>
+                                                    <td>11</td>
+                                                    <td>12</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>13</td>
+                                                    <td>14</td>
+                                                    <td>15</td>
+                                                    <td>16</td>
+                                                    <td>17</td>
+                                                    <td>18</td>
+                                                    <td>19</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>20</td>
+                                                    <td>21</td>
+                                                    <td>22</td>
+                                                    <td>23</td>
+                                                    <td>24</td>
+                                                    <td>25</td>
+                                                    <td>26</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>27</td>
+                                                    <td>28</td>
+                                                    <td>29</td>
+                                                    <td>30</td>
+                                                    <td>31</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <div class="time-selection">
+                                        <h3>Select Time Slot</h3>
+                                        <div class="time-slots">
+                                            <div class="time-slot">9:00 AM</div>
+                                            <div class="time-slot">10:00 AM</div>
+                                            <div class="time-slot">11:00 AM</div>
+                                            <div class="time-slot">12:00 PM</div>
+                                            <div class="time-slot">1:00 PM</div>
+                                            <div class="time-slot">2:00 PM</div>
+                                            <div class="time-slot">3:00 PM</div>
+                                            <div class="time-slot">4:00 PM</div>
+                                            <div class="time-slot">5:00 PM</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-content" id="patient-tab">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="firstName" class="form-label">First Name</label>
+                                        <input type="text" id="firstName" class="form-control" placeholder="Enter your first name">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="lastName" class="form-label">Last Name</label>
+                                        <input type="text" id="lastName" class="form-control" placeholder="Enter your last name">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="email" class="form-label">Email Address</label>
+                                        <input type="email" id="email" class="form-control" placeholder="Enter your email address">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="phone" class="form-label">Phone Number</label>
+                                        <input type="tel" id="phone" class="form-control" placeholder="Enter your phone number">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="dob" class="form-label">Date of Birth</label>
+                                        <input type="date" id="dob" class="form-control">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Gender</label>
+                                        <div class="form-row">
+                                            <div class="form-check">
+                                                <input type="radio" id="male" name="gender" class="form-check-input">
+                                                <label for="male" class="form-check-label">Male</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input type="radio" id="female" name="gender" class="form-check-input">
+                                                <label for="female" class="form-check-label">Female</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="address" class="form-label">Address</label>
+                                        <input type="text" id="address" class="form-control" placeholder="Enter your address">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="city" class="form-label">City</label>
+                                        <input type="text" id="city" class="form-control" placeholder="Enter your city">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="insurance" class="form-label">Insurance Provider (Optional)</label>
+                                        <input type="text" id="insurance" class="form-control" placeholder="Enter your insurance provider">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-buttons">
+                        <button class="btn btn-back">Back</button>
+                        <button class="btn btn-next">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <a href="/" class="footer-logo">
+                    <img src="images/t.png" alt="Test Mate Logo" class="logo-img">
+                    <span>Test Mate</span>
+                </a>
+                <p class="footer-description">Your trusted partner for lab appointments. Book with ease and convenience.</p>
+            </div>
+            
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h3 class="footer-title">Quick Links</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3 class="footer-title">Our Services</h3>
+                    <ul>
+                        <li><a href="#">Blood Tests</a></li>
+                        <li><a href="#">Cardiac Tests</a></li>
+                        <li><a href="#">Genetic Tests</a></li>
+                        <li><a href="#">Radiology</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3 class="footer-title">Contact Us</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <div class="footer-contact">
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Main Street, Cairo, Egypt</p>
+                        <p><i class="fas fa-phone"></i> +20 123 456 7890</p>
+                        <p><i class="fas fa-envelope"></i> info@testmate.com</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                &copy; 2024 Test Mate. All rights reserved.
+            </div>
+        </div>
+    </footer> -->
+
+    <div class="invoice-page">
+        <div class="invoice-container">
+            <div class="invoice-header">
+                <div class="invoice-logo">
+                    <img src="images/t.png" class="logo-img">
+                    <span>Test Mate</span>
+                </div>
+                <div class="invoice-title">Invoice</div>
+            </div>
+            <div class="invoice-body">
+                <div class="invoice-info">
+                    <div class="invoice-info-section">
+                        <h3 class="invoice-info-title">Billed To</h3>
+                        <div class="invoice-info-item"><strong>John Doe</strong></div>
+                        <div class="invoice-info-item">john.doe@example.com</div>
+                        <div class="invoice-info-item">123 Main Street, Cairo, Egypt</div>
+                    </div>
+                    <div class="invoice-info-section">
+                        <h3 class="invoice-info-title">Invoice Details</h3>
+                        <div class="invoice-info-item"><strong>Invoice Number:</strong> INV-2024-1001</div>
+                        <div class="invoice-info-item"><strong>Date:</strong> October 26, 2024</div>
+                        <div class="invoice-info-item"><strong>Due Date:</strong> November 10, 2024</div>
+                    </div>
+                </div>
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th class="text-right">Unit Price</th>
+                            <th class="text-right">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Complete Blood Count (CBC)</td>
+                            <td>1</td>
+                            <td class="text-right">250 EGP</td>
+                            <td class="text-right">250 EGP</td>
+                        </tr>
+                        <tr>
+                            <td>Lipid Profile</td>
+                            <td>1</td>
+                            <td class="text-right">300 EGP</td>
+                            <td class="text-right">300 EGP</td>
+                        </tr>
+                        <tr>
+                            <td>Liver Function Test (LFT)</td>
+                            <td>1</td>
+                            <td class="text-right">280 EGP</td>
+                            <td class="text-right">280 EGP</td>
+                        </tr>
+                        <tr>
+                            <td>Kidney Function Test (KFT)</td>
+                            <td>1</td>
+                            <td class="text-right">220 EGP</td>
+                            <td class="text-right">220 EGP</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="invoice-totals">
+                    <div class="invoice-total-row">
+                        <span>Subtotal</span>
+                        <span>1050 EGP</span>
+                    </div>
+                    <div class="invoice-total-row">
+                        <span>Tax (0%)</span>
+                        <span>0 EGP</span>
+                    </div>
+                    <div class="invoice-total-row final">
+                        <span>Total</span>
+                        <span>1050 EGP</span>
+                    </div>
+                </div>
+                <div class="invoice-notes">
+                    Thank you for choosing Test Mate. Please make the payment by the due date.
+                </div>
+            </div>
+            <div class="invoice-footer">
+                &copy; 2024 Test Mate. All rights reserved.
+            </div>
+            <div class="invoice-actions">
+                <button class="invoice-action-btn btn-print">
+                    <i class="fas fa-print"></i>
+                    Print
+                </button>
+                <button class="invoice-action-btn btn-confirm">
+                    <i class="fas fa-check-circle"></i>
+                    Confirm
+                </button>
+                <button class="invoice-action-btn btn-cancel">
+                    <i class="fas fa-times-circle"></i>
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="confirmation-modal" style="display: none;">
+        <div class="confirmation-container">
+            <div class="confirmation-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 class="confirmation-title">Appointment Confirmed!</h2>
+            <p class="confirmation-message">Your appointment has been successfully booked. You will receive a confirmation email with all the details.</p>
+            <div class="confirmation-actions">
+                <a href="ViewAppointment.html">
+                    <button class="btn btn-confirm">View Appointment</button>
+                </a>
+                <button class="btn btn-cancel">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Menu Toggle
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navLinks = document.querySelector('.nav-links');
+
+            mobileMenuBtn.addEventListener('click', function() {
+                navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+            });
+
+            // Tab Functionality
+            const tabItems = document.querySelectorAll('.tab-item');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabItems.forEach(tabItem => {
+                tabItem.addEventListener('click', function() {
+                    // Deactivate all tabs and content
+                    tabItems.forEach(item => item.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+
+                    // Activate the clicked tab and corresponding content
+                    tabItem.classList.add('active');
+                    const tabId = tabItem.dataset.tab;
+                    document.getElementById(tabId + '-tab').classList.add('active');
+
+                    // Update the steps
+                    updateSteps(tabId);
+                });
+            });
+
+            // Steps Functionality
+            function updateSteps(tabId) {
+                const steps = document.querySelectorAll('.step');
+                steps.forEach(step => {
+                    step.classList.remove('active');
+                    step.classList.remove('completed');
+                });
+
+                const tabOrder = {
+                    'location': 1,
+                    'tests': 2,
+                    'schedule': 3,
+                    'patient': 4,
+                    'confirm': 5
+                };
+
+                for (let i = 1; i <= Object.keys(tabOrder).length; i++) {
+                    const step = document.getElementById(`step-${i}`);
+                    if (i < tabOrder[tabId]) {
+                        step.classList.add('completed');
+                    } else if (i === tabOrder[tabId]) {
+                        step.classList.add('active');
+                    }
+                }
+            }
+
+            // Lab Selection
+            const labCards = document.querySelectorAll('.lab-card');
+            labCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Deselect all cards
+                    labCards.forEach(c => c.classList.remove('selected'));
+                    // Select the clicked card
+                    card.classList.add('selected');
+                });
+            });
+
+            // Test Selection
+            const testItems = document.querySelectorAll('.test-item');
+            testItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    item.classList.toggle('selected');
+                });
+            });
+
+        // Show confirmation modal when Confirm button is clicked
+        const btnConfirm = document.querySelector('.btn-confirm');
+        const confirmationModal = document.querySelector('.confirmation-modal');
+        
+        if (btnConfirm) {
+            btnConfirm.addEventListener('click', function() {
+                confirmationModal.style.display = 'flex';
+            });
+        }
+        
+        // Close confirmation modal when Close button is clicked
+        const btnClose = document.querySelector('.confirmation-actions .btn-cancel');
+        
+        if (btnClose) {
+            btnClose.addEventListener('click', function() {
+                confirmationModal.style.display = 'none';
+            });
+        }
+        
+        // Also make the Next button show the confirmation modal when on the last tab
+        const btnNext = document.querySelector('.btn-next');
+
+        if (btnNext) {
+            btnNext.addEventListener('click', function() {
+                const activeTab = document.querySelector('.tab-item.active');
+                if (activeTab && activeTab.dataset.tab === 'patient') {
+                    confirmationModal.style.display = 'flex';
+                } 
+                else {
+                    // Find the currently active tab
+                    const currentActiveTab = document.querySelector('.tab-item.active');
+                    if (currentActiveTab) {
+                        // Get all tab items as an array
+                        const allTabs = Array.from(document.querySelectorAll('.tab-item'));
+                        // Find the index of the current active tab
+                        const currentIndex = allTabs.indexOf(currentActiveTab);
+                        // If there's a next tab, activate it
+                        if (currentIndex < allTabs.length - 1) {
+                            allTabs[currentIndex + 1].click();
+                        }
+                    }
+                }
+            });
+        }
+        });
+    </script>
+</body>
+</html>
